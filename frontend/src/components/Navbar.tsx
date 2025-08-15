@@ -45,7 +45,7 @@ export default function Navbar() {
                 <div className="h-8 w-8 rounded-full bg-gray-300"></div>
               )}
               <span className="text-sm font-medium text-gray-700" data-testid="text-user-name">
-                {user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'User'}
+                {user?.name ? user.name : 'User'}
               </span>
               <ChevronDown className="h-4 w-4 text-gray-500" />
             </div>

@@ -26,7 +26,9 @@ await newUser.save();
     res.status(201).json({
       message: "User registered successfully",
       token,
-      role: newUser.role
+      name: newUser.name,
+      role: newUser.role,
+      profileImageUrl: newUser.profileImageUrl
     });
 
   } catch (error) {
@@ -50,7 +52,9 @@ router.post("/login", async (req, res) => {
     res.status(200).json({
       message: "Login successful",
       token,
-      role: user.role
+      name: user.name,
+      role: user.role,
+      profileImageUrl: user.profileImageUrl
     });
 
   } catch (error) {
