@@ -24,6 +24,9 @@ const userSchema = new mongoose.Schema({
   enum: ["admin", "doctor", "patient"], 
   default: "patient" 
 },
+profileImageUrl: 
+{ type: String, 
+  required: true },
 }, { timestamps: true });
 
 userSchema.pre("save", async function (next) {

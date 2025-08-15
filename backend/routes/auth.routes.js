@@ -3,12 +3,13 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 
+
 const router = express.Router();
 
 // Sign Up
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, profileImageUrl } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: "User already exists" });
@@ -17,7 +18,7 @@ router.post("/register", async (req, res) => {
 
     // const newUser = new User({ name, email, password: hashedPassword, role });
     // await newUser.save();
-    const newUser = new User({ name, email, password, role });
+    const newUser = new User({ name, email, password, role, profileImageUrl: req.body.profileImageUrl });
 await newUser.save();
 
     const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: "1d" });

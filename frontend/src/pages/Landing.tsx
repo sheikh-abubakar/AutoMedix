@@ -58,15 +58,7 @@ export default function Landing() {
                 >
                   Get Started
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg"
-                  onClick={handleSignup}
-                  className="text-lg px-8 py-3"
-                  data-testid="button-learn-more"
-                >
-                  Register
-                </Button>
+            
               </div>
             </div>
             <div className="relative">

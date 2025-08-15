@@ -12,11 +12,13 @@ const generateToken = (id, role) => {
 // ======================= REGISTER =======================
 export const registerUser = async (req, res) => {
   try {
-    let { name, email, password, role } = req.body;
-
-    // Role ko lowercase karo, default "patient"
+    let { name, email, password, role, profileImageUrl } = req.body;
     role = role ? role.toLowerCase() : "patient";
+    console.log("Received data:", { name, email, password, role, profileImageUrl });
 
+    if (!profileImageUrl) {
+      return res.status(400).json({ message: "Profile image is required" });
+    }
     // Check existing user
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -24,7 +26,7 @@ export const registerUser = async (req, res) => {
     }
 
     // Create user
-    const user = await User.create({ name, email, password, role });
+    const user = await User.create({ name, email, password, role , profileImageUrl });
 
     // Send response
     res.status(201).json({
@@ -32,6 +34,7 @@ export const registerUser = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      profileImageUrl: user.profileImageUrl,
       token: generateToken(user._id, user.role),
     });
   } catch (error) {

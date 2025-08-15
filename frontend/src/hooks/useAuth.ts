@@ -53,9 +53,9 @@ const login = async (email: string, password: string) => {
 
 
   // Signup function
-  const signup = async (email: string, password: string, name: string, role: string) => {
+  const signup = async (email: string, password: string, name: string, role: string, profileImageUrl: string) => {
     setIsLoading(true);
-    const res = await axios.post("http://localhost:5000/api/auth/register", { email, password, name, role });
+    const res = await axios.post("http://localhost:5000/api/auth/register", { email, password, name, role, profileImageUrl });
     localStorage.setItem("token", res.data.token);
     localStorage.setItem("role", res.data.role);
     setUser({ id: res.data._id, role: res.data.role });

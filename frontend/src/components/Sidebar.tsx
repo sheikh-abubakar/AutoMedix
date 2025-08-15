@@ -75,10 +75,7 @@ export default function Sidebar() {
 
   const navItems = getNavItems();
   const roleInfo = getRoleInfo();
-
-  const handleLogout = () => {
-    window.location.href = "/api/logout";
-  };
+ const { logout } = useAuth();
 
   return (
     <aside className="w-64 bg-white shadow-sm border-r border-gray-200 flex flex-col">
@@ -131,7 +128,7 @@ export default function Sidebar() {
           
           <Button
             variant="ghost"
-            onClick={handleLogout}
+            onClick={logout}
             className="w-full justify-start space-x-3 h-10 text-gray-700 hover:bg-red-50 hover:text-red-600"
             data-testid="nav-logout"
           >
