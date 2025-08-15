@@ -19,12 +19,11 @@ const userSchema = new mongoose.Schema({
     type: String, 
     required: true
    },
-  role: 
-  { 
-    type: String, 
-    enum: ["Admin", "Doctor", "Patient"], 
-    default: "Patient" 
-  },
+  role: { 
+  type: String, 
+  enum: ["admin", "doctor", "patient"], 
+  default: "patient" 
+},
 }, { timestamps: true });
 
 userSchema.pre("save", async function (next) {

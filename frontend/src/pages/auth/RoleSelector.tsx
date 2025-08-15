@@ -4,11 +4,15 @@ interface RoleSelectorProps {
   onRoleChange: (role: string) => void;
 }
 
-const RoleSelector: React.FC<RoleSelectorProps> = ({ onRoleChange }) => {
-  const roles = ['patient', 'doctor', 'admin'];
-
+const RoleSelector: React.FC<RoleSelectorProps & { value?: string }> = ({ onRoleChange, value }) => {
+  const roles = ['patient', 'doctor'];
   return (
-    <select onChange={(event) => onRoleChange(event.currentTarget.value)}>
+    <select
+      onChange={(event) => onRoleChange(event.currentTarget.value)}
+      value={value || ''}
+      required
+    >
+      <option value="" disabled>Select role</option>
       {roles.map((role) => (
         <option key={role} value={role}>
           {role.charAt(0).toUpperCase() + role.slice(1)}
