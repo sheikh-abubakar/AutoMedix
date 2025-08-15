@@ -4,10 +4,11 @@ import { Bell, Heart, ChevronDown } from "lucide-react";
 
 export default function Navbar() {
   const { user } = useAuth();
+  const { logout } = useAuth();
 
-  const handleLogout = () => {
-    window.location.href = "/api/logout";
-  };
+  // const handleLogout = () => {
+  //   window.location.href = "/api/logout";
+  // };
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -48,15 +49,9 @@ export default function Navbar() {
               </span>
               <ChevronDown className="h-4 w-4 text-gray-500" />
             </div>
-            
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={handleLogout}
-              data-testid="button-logout"
-            >
-              Logout
-            </Button>
+            <div>
+              <Button onClick={logout}>Logout</Button>
+            </div>
           </div>
         </div>
       </div>

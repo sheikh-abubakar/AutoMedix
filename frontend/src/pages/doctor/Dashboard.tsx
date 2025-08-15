@@ -36,6 +36,7 @@ interface Appointment {
 
 export default function DoctorDashboard() {
   const { toast } = useToast();
+//  const { logout } = useAuth();
   const { isAuthenticated, isLoading, user } = useAuth();
 
   // Redirect to home if not authenticated
@@ -154,6 +155,10 @@ export default function DoctorDashboard() {
               <Plus className="h-4 w-4" />
               <span>New Appointment</span>
             </Button>
+            {/* <Button variant="outline" onClick={logout} data-testid="button-logout">
+              Logout
+            </Button> */}
+
           </div>
         </div>
 

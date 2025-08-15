@@ -65,12 +65,20 @@ const login = async (email: string, password: string) => {
     else setLocation("/patient/dashboard");
   };
 
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    setLocation("/"); // Redirect to landing page
+  };
+
+
   return {
     user,
     isLoading,
     isAuthenticated: !!user,
     login,
     signup,
+    logout,
   };
 }// import { useQuery } from "@tanstack/react-query";
 // import axios from "axios";
