@@ -16,6 +16,7 @@ import HealthRecords from "@/pages/patient/HealthRecords";
 import Messages from "@/pages/patient/Messages";
 import Login from "@/pages/auth/Login";
 import Signup from "@/pages/auth/Signup";
+import DoctorApprovals from "@/pages/admin/DoctorApprovals";
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -43,6 +44,7 @@ function Router() {
       <Route path="/book-appointment" component={BookAppointment} />
       <Route path="/health-records" component={HealthRecords} />
       <Route path="/messages" component={Messages} />
+      <Route path="/admin/doctor-approvals" component={DoctorApprovals} />
       <Route component={NotFound} />
     </Switch>
   );

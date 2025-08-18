@@ -1,15 +1,18 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import Layout from "@/components/Layout";
 import StatsCard from "@/components/StatsCard";
+import PendingDoctors from "./PendingDoctors";
+import { Users, UserCheck, Calendar, DollarSign, Shield, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, UserCheck, Calendar, DollarSign, Shield, Settings } from "lucide-react";
 
 export default function AdminDashboard() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading, user } = useAuth();
+  const [pendingCount, setPendingCount] = useState(0);
+  const [showPendingList, setShowPendingList] = useState(false);
 
   // Redirect to home if not authenticated
   useEffect(() => {
@@ -25,6 +28,13 @@ export default function AdminDashboard() {
       return;
     }
   }, [isAuthenticated, isLoading, toast]);
+
+  // Fetch pending doctors count
+  useEffect(() => {
+    fetch("http://localhost:5000/api/admin/pending-doctors")
+      .then(res => res.json())
+      .then(data => setPendingCount(data.length));
+  }, []);
 
   if (isLoading || !user) {
     return (
@@ -48,10 +58,11 @@ export default function AdminDashboard() {
     },
     {
       title: "Pending Doctor Approvals",
-      value: "8",
+      value: pendingCount.toString(),
       changeText: "Requires attention",
       icon: UserCheck,
       color: "yellow",
+      clickable: true, // custom property
     },
     {
       title: "Total Appointments",
@@ -83,9 +94,22 @@ export default function AdminDashboard() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
           {statsData.map((stat, index) => (
-            <StatsCard key={index} {...stat} />
+            <div
+              key={index}
+              onClick={index === 1 ? () => setShowPendingList(true) : undefined}
+              style={{ cursor: index === 1 ? "pointer" : "default" }}
+            >
+              <StatsCard {...stat} />
+            </div>
           ))}
         </div>
+
+        {/* Pending Doctors List Section */}
+        {showPendingList && (
+          <div className="mb-6">
+            <PendingDoctors onClose={() => setShowPendingList(false)} />
+          </div>
+        )}
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">

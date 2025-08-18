@@ -14,6 +14,8 @@ import {
   Shield,
   PillBottle
 } from "lucide-react";
+import React from "react";
+import { Link } from "react-router-dom";
 
 const doctorNavItems = [
   { icon: BarChart3, label: "Dashboard", href: "/dashboard", badge: null },
@@ -38,14 +40,15 @@ const patientNavItems = [
 const adminNavItems = [
   { icon: BarChart3, label: "Dashboard", href: "/dashboard", badge: null },
   { icon: Users, label: "User Management", href: "/users", badge: null },
-  { icon: UserCheck, label: "Doctor Approvals", href: "/approvals", badge: 8 },
+  // Doctor Approvals nav item will navigate to a page
+  { icon: UserCheck, label: "Approved doctors", href: "/admin/doctor-approvals", badge: null },
   { icon: Calendar, label: "Appointments", href: "/appointments", badge: null },
   { icon: Shield, label: "System Health", href: "/system", badge: null },
   { icon: BarChart3, label: "Analytics", href: "/analytics", badge: null },
 ];
 
 export default function Sidebar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const getNavItems = () => {
     switch (user?.role) {
@@ -75,7 +78,6 @@ export default function Sidebar() {
 
   const navItems = getNavItems();
   const roleInfo = getRoleInfo();
- const { logout } = useAuth();
 
   return (
     <aside className="w-64 bg-white shadow-sm border-r border-gray-200 flex flex-col">
@@ -94,15 +96,32 @@ export default function Sidebar() {
       
       <nav className="flex-1 p-4 space-y-2">
         {navItems.map((item, index) => {
-          const isActive = index === 1; // Mock active state for appointments
-          
+          // Approved doctors nav item: use Link for navigation
+          if (user?.role === "admin" && item.label === "Approved doctors") {
+            return (
+              <Link to={item.href} key={item.href}>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start space-x-3 h-10 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                  data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+                >
+                  <item.icon className="h-5 w-5" />
+                  <span className="font-medium flex-1 text-left">{item.label}</span>
+                  {item.badge && (
+                    <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                      {item.badge}
+                    </span>
+                  )}
+                </Button>
+              </Link>
+            );
+          }
+          // Other nav items
           return (
             <Button
               key={item.href}
-              variant={isActive ? "secondary" : "ghost"}
-              className={`w-full justify-start space-x-3 h-10 ${
-                isActive ? 'bg-blue-50 text-blue-600 hover:bg-blue-100' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
-              }`}
+              variant="ghost"
+              className="w-full justify-start space-x-3 h-10 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
               data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
             >
               <item.icon className="h-5 w-5" />
@@ -115,7 +134,7 @@ export default function Sidebar() {
             </Button>
           );
         })}
-        
+
         <div className="border-t border-gray-200 pt-4 mt-4">
           <Button
             variant="ghost"

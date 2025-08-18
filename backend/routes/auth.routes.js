@@ -3,19 +3,32 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 
-
 const router = express.Router();
 
 // Sign Up
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password, role, profileImageUrl } = req.body;
+    const { name, email, password, role, profileImageUrl, age, gender, experience, specialization, resumeUrl } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: "User already exists" });
 
-    const newUser = new User({ name, email, password, role, profileImageUrl: req.body.profileImageUrl });
-await newUser.save();
+    let userData = { name, email, password, role, profileImageUrl };
+
+    if (role === "patient") {
+      userData.age = age;
+      userData.gender = gender;
+    }
+
+    if (role === "doctor") {
+      userData.experience = experience;
+      userData.specialization = specialization;
+      userData.resumeUrl = resumeUrl;
+      userData.status = "pending";
+    }
+
+    const newUser = new User(userData);
+    await newUser.save();
 
     const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
@@ -24,7 +37,13 @@ await newUser.save();
       token,
       name: newUser.name,
       role: newUser.role,
-      profileImageUrl: newUser.profileImageUrl
+      profileImageUrl: newUser.profileImageUrl,
+      age: newUser.age,
+      gender: newUser.gender,
+      experience: newUser.experience,
+      specialization: newUser.specialization,
+      resumeUrl: newUser.resumeUrl,
+      status: newUser.status,
     });
 
   } catch (error) {
@@ -36,10 +55,15 @@ await newUser.save();
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "Invalid email or password" });
 
+    // Doctor approval check
+    if (user.role === "doctor" && user.status === "pending") {
+      return res.status(403).json({ message: "Your account is pending admin approval." });
+    }
+
+    // Allow login if status is "approved"
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid email or password" });
 
@@ -50,12 +74,13 @@ router.post("/login", async (req, res) => {
       token,
       name: user.name,
       role: user.role,
-      profileImageUrl: user.profileImageUrl
+      profileImageUrl: user.profileImageUrl,
+      status: user.status
     });
-
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
 });
 
 export default router;
+
