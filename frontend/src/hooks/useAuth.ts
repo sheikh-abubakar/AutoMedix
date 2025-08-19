@@ -40,55 +40,55 @@ export function useAuth() {
 
   // Login
   const login = async (email: string, password: string) => {
-    setIsLoading(true);
-    setAuthError(null);
-    try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", { email, password });
+  setIsLoading(true);
+  setAuthError(null);
+  try {
+    const res = await axios.post("http://localhost:5000/api/auth/login", { email, password });
 
-      const userData = {
-        id: res.data._id,
-        role: res.data.role,
-        email: res.data.email,
-        profileImageUrl: res.data.profileImageUrl,
-        name: res.data.name,
-        token: res.data.token,
-        status: res.data.status,
-      };
+    const userData = {
+      id: res.data._id,
+      role: res.data.role,
+      email: res.data.email,
+      profileImageUrl: res.data.profileImageUrl,
+      name: res.data.name,
+      token: res.data.token,
+      status: res.data.status,
+    };
 
-      setUser(userData);
-      saveUserToLocalStorage(userData);
-      setIsLoading(false);
+    setUser(userData);
+    saveUserToLocalStorage(userData);
+    setIsLoading(false);
 
-      if (res.data.role === "doctor") {
-        // Doctor can only navigate if approved
-        if (res.data.status === "approved") {
-          setLocation("/doctor/dashboard");
-        } else {
-          setAuthError("Your account is pending admin approval.");
-        }
-      } else if (res.data.role === "admin") setLocation("/admin/dashboard");
-      else setLocation("/patient/dashboard");
-    } catch (err: any) {
-      setIsLoading(false);
-      if (err.response?.status === 403) {
-        setAuthError(err.response.data.message);
+    if (res.data.role === "doctor") {
+      if (res.data.status === "approved") {
+        setLocation("/doctor/dashboard");
       } else {
-        setAuthError(err.response?.data?.message || "Login failed");
+        setAuthError("Your account is pending admin approval.");
       }
+    } else if (res.data.role === "admin") setLocation("/admin/dashboard");
+    else setLocation("/patient/dashboard");
+  } catch (err: any) {
+    setIsLoading(false);
+    if (err.response?.status === 403) {
+      setAuthError(err.response.data.message);
+    } else {
+      setAuthError(err.response?.data?.message || "Login failed");
     }
-  };
+  }
+};
 
   // Signup
-  const signup = async (
-    email: string,
-    password: string,
-    name: string,
-    role: string,
-    profileImageUrl: string,
-    extraFields?: any
-  ) => {
-    setIsLoading(true);
-    setAuthError(null);
+ const signup = async (
+  email: string,
+  password: string,
+  name: string,
+  role: string,
+  profileImageUrl: string,
+  extraFields?: any
+) => {
+  setIsLoading(true);
+  setAuthError(null);
+  try {
     const res = await axios.post("http://localhost:5000/api/auth/register", {
       email,
       password,
@@ -113,11 +113,18 @@ export function useAuth() {
     setIsLoading(false);
 
     if (res.data.role === "doctor") {
-      // Doctor signup: show info, don't navigate
-      setAuthError("wait please");
+      if (res.data.status === "approved") {
+        setLocation("/doctor/dashboard");
+      } else {
+        setAuthError("Your account is pending admin approval.");
+      }
     } else if (res.data.role === "admin") setLocation("/admin/dashboard");
     else setLocation("/patient/dashboard");
-  };
+  } catch (err: any) {
+    setIsLoading(false);
+    setAuthError(err.response?.data?.message || "Signup failed");
+  }
+};
 
   // Logout
   const logout = () => {

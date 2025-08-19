@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import RoleSelector from "./RoleSelector";
 
-const CLOUDINARY_UPLOAD_PRESET = "mypreset";
-const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/du9sqdgkn/raw/upload";
+const CLOUDINARY_UPLOAD_PRESET = "firstPreset";
+const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dkmgbgxb8/raw/upload";
 
 const Signup = () => {
   const { signup, authError } = useAuth();

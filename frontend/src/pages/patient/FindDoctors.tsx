@@ -1,99 +1,69 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Layout from "@/components/Layout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Search } from "lucide-react";
+import DoctorCard from "@/components/DoctorCard";
+import DoctorProfileModal from "@/components/DoctorProfileModal";
 
 export default function FindDoctors() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [specialization, setSpecialization] = useState("");
   const [doctors, setDoctors] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [searchName, setSearchName] = useState("");
+  const [searchSpecialization, setSearchSpecialization] = useState("");
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
 
-  // Search doctors by name or specialization
-  const handleSearch = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get("http://localhost:5000/api/doctors", {
-        params: {
-          name: searchTerm,
-          specialization: specialization
-        }
-      });
-      setDoctors(res.data);
-    } catch {
-      setDoctors([]);
-    }
-    setLoading(false);
+  const fetchDoctors = async (name = "", specialization = "") => {
+    const params: any = {};
+    if (name) params.name = name;
+    if (specialization) params.specialization = specialization;
+    const res = await axios.get("http://localhost:5000/api/doctors", { params });
+    setDoctors(res.data);
+  };
+
+  useEffect(() => {
+    fetchDoctors();
+  }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchDoctors(searchName, searchSpecialization);
   };
 
   return (
-    <Layout>
-      <div className="p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Find Doctors</h1>
-          <p className="text-gray-600 mt-1">Search and book appointments with qualified doctors</p>
+    <div className="p-8">
+      <h2 className="text-2xl font-bold mb-2">Find Doctors</h2>
+      <p className="mb-6 text-gray-600">Search and book appointments with qualified doctors</p>
+      <form className="flex gap-4 mb-6" onSubmit={handleSearch}>
+        <input
+          type="text"
+          placeholder="Search by name"
+          value={searchName}
+          onChange={e => setSearchName(e.target.value)}
+          className="border rounded-lg px-3 py-2 w-1/3"
+        />
+        <input
+          type="text"
+          placeholder="Search by specialization"
+          value={searchSpecialization}
+          onChange={e => setSearchSpecialization(e.target.value)}
+          className="border rounded-lg px-3 py-2 w-1/3"
+        />
+        <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-lg">Search</button>
+      </form>
+      {doctors.length === 0 ? (
+        <div className="flex flex-col items-center mt-16">
+          <svg width="48" height="48" fill="none" stroke="currentColor" className="mb-4 text-gray-400">
+            <circle cx="24" cy="24" r="22" strokeWidth="2" />
+            <path d="M32 32l8 8" strokeWidth="2" />
+          </svg>
+          <h3 className="text-lg font-semibold text-gray-700">No doctors found</h3>
+          <p className="text-gray-500">Try adjusting your search criteria</p>
         </div>
-
-        {/* Search Inputs */}
-        <div className="mb-6 flex gap-4">
-          <Input
-            placeholder="Search by name"
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            className="max-w-xs"
-          />
-          <Input
-            placeholder="Search by specialization"
-            value={specialization}
-            onChange={e => setSpecialization(e.target.value)}
-            className="max-w-xs"
-          />
-          <Button onClick={handleSearch} className="flex items-center gap-2">
-            <Search className="h-4 w-4" />
-            Search
-          </Button>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {doctors.map((doctor: any) => (
+            <DoctorCard key={doctor._id} doctor={doctor} onClick={() => setSelectedDoctor(doctor)} />
+          ))}
         </div>
-
-        {/* Doctors List */}
-        {loading ? (
-          <div className="text-center py-12 text-gray-500">Loading...</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {doctors.map((doctor: any) => (
-              <Card key={doctor._id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle>{doctor.name}</CardTitle>
-                  <Badge variant="secondary">{doctor.specialization}</Badge>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-gray-600 mb-2">
-                    Experience: {doctor.experience || "N/A"} years
-                  </div>
-                  <div className="text-gray-600 mb-2">
-                    Email: {doctor.email}
-                  </div>
-                  {/* Add more doctor info if needed */}
-                  <Button className="w-full mt-2" disabled>
-                    Book Appointment
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {doctors.length === 0 && !loading && (
-          <div className="text-center py-12">
-            <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No doctors found</h3>
-            <p className="text-gray-600">Try adjusting your search criteria</p>
-          </div>
-        )}
-      </div>
-    </Layout>
+      )}
+      <DoctorProfileModal doctor={selectedDoctor} onClose={() => setSelectedDoctor(null)} />
+    </div>
   );
 }
