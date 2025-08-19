@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DoctorCard from "@/components/DoctorCard";
 import DoctorProfileModal from "@/components/DoctorProfileModal";
+import BookAppointmentModal from "@/components/BookAppointmentModal";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function FindDoctors() {
   const [doctors, setDoctors] = useState([]);
   const [searchName, setSearchName] = useState("");
   const [searchSpecialization, setSearchSpecialization] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [bookingDoctor, setBookingDoctor] = useState(null);
+  const { user } = useAuth();
 
   const fetchDoctors = async (name = "", specialization = "") => {
     const params: any = {};
@@ -25,6 +29,8 @@ export default function FindDoctors() {
     e.preventDefault();
     fetchDoctors(searchName, searchSpecialization);
   };
+
+  const patientId = typeof user?._id === "string" ? user._id : "";
 
   return (
     <div className="p-8">
@@ -49,21 +55,28 @@ export default function FindDoctors() {
       </form>
       {doctors.length === 0 ? (
         <div className="flex flex-col items-center mt-16">
-          <svg width="48" height="48" fill="none" stroke="currentColor" className="mb-4 text-gray-400">
-            <circle cx="24" cy="24" r="22" strokeWidth="2" />
-            <path d="M32 32l8 8" strokeWidth="2" />
-          </svg>
           <h3 className="text-lg font-semibold text-gray-700">No doctors found</h3>
           <p className="text-gray-500">Try adjusting your search criteria</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {doctors.map((doctor: any) => (
-            <DoctorCard key={doctor._id} doctor={doctor} onClick={() => setSelectedDoctor(doctor)} />
+            <div key={doctor._id}>
+              <DoctorCard doctor={doctor} onClick={() => setSelectedDoctor(doctor)} />
+              <button className="mt-2 px-3 py-1 bg-green-600 text-white rounded" onClick={() => setBookingDoctor(doctor)}>
+                Book Appointment
+              </button>
+            </div>
           ))}
         </div>
       )}
       <DoctorProfileModal doctor={selectedDoctor} onClose={() => setSelectedDoctor(null)} />
+      <BookAppointmentModal
+        doctor={bookingDoctor}
+        patientId={patientId}
+        onClose={() => setBookingDoctor(null)}
+        onBooked={() => setBookingDoctor(null)}
+      />
     </div>
   );
 }

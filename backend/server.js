@@ -6,6 +6,8 @@ import authRoutes from "./routes/auth.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import doctorRoutes from "./routes/doctors.routes.js";
+import scheduleRoutes from "./routes/schedule.routes.js";
+import appointmentRoutes from "./routes/appointment.routes.js";
 
 dotenv.config();
 connectDB();
@@ -23,6 +25,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/doctors", doctorRoutes);
+app.use("/api/schedule", scheduleRoutes);
+app.use("/api/appointments", appointmentRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend API is running...");

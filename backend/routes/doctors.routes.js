@@ -34,4 +34,14 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Get all doctors
+router.get("/", async (req, res) => {
+  try {
+    const doctors = await User.find({ role: "doctor" }); // adjust filter as needed
+    res.json(doctors);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;

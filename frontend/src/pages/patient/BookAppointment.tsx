@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,8 +11,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import axios from "axios";
 import { Calendar, Clock, User, FileText } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const appointmentSchema = z.object({
   doctorId: z.string().min(1, "Please select a doctor"),
@@ -24,10 +26,22 @@ const appointmentSchema = z.object({
 
 type AppointmentFormData = z.infer<typeof appointmentSchema>;
 
+const appointmentTypes = [
+  { value: "general-checkup", label: "General Checkup" },
+  { value: "consultation", label: "Consultation" },
+  { value: "follow-up", label: "Follow-up" },
+  { value: "video-call", label: "Video Consultation" },
+];
+
 export default function BookAppointment() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
+  const { user } = useAuth();
+
+  const [doctors, setDoctors] = useState<any[]>([]);
+  const [schedule, setSchedule] = useState<any>(null);
+  const [scheduleError, setScheduleError] = useState<string>("");
+
   const form = useForm<AppointmentFormData>({
     resolver: zodResolver(appointmentSchema),
     defaultValues: {
@@ -40,15 +54,55 @@ export default function BookAppointment() {
     },
   });
 
+  // Fetch doctors from backend
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/doctors").then(res => setDoctors(res.data));
+  }, []);
+
+  // Fetch schedule when doctor changes
+  useEffect(() => {
+    setSchedule(null);
+    setScheduleError("");
+    const docId = form.watch("doctorId");
+    if (docId) {
+      const doc = doctors.find(d => d._id === docId);
+      if (doc) {
+        axios.get(`http://localhost:5000/api/schedule/${doc._id}`)
+          .then(res => {
+            if (res.data) {
+              setSchedule(res.data);
+            } else {
+              setScheduleError("Doctor has not set their schedule yet.");
+            }
+          })
+          .catch(() => setScheduleError("Doctor has not set their schedule yet."));
+      }
+    }
+  }, [form.watch("doctorId"), doctors]);
+
+  // Generate available time slots from schedule
+  const getTimeSlots = () => {
+    if (!schedule) return [];
+    const start = parseInt(schedule.startTime.split(":")[0], 10);
+    const end = parseInt(schedule.endTime.split(":")[0], 10);
+    const slots = [];
+    for (let h = start; h < end; h++) {
+      slots.push(`${h.toString().padStart(2, "0")}:00`);
+      slots.push(`${h.toString().padStart(2, "0")}:30`);
+    }
+    return slots;
+  };
+
   const bookAppointmentMutation = useMutation({
     mutationFn: async (data: AppointmentFormData) => {
-      return await apiRequest("/api/appointments", {
-        method: "POST",
-        body: JSON.stringify({
-          ...data,
-          appointmentDate: new Date(data.appointmentDate),
-          fee: 150, // Mock fee
-        }),
+      return await axios.post("http://localhost:5000/api/appointments/book", {
+        doctorId: data.doctorId,
+        patientId: user?._id || "",
+        date: data.appointmentDate,
+        time: data.appointmentTime,
+        type: data.type,
+        symptoms: data.symptoms,
+        notes: data.notes,
       });
     },
     onSuccess: () => {
@@ -62,34 +116,41 @@ export default function BookAppointment() {
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to book appointment. Please try again.",
+        description: error.response?.data?.message || "Failed to book appointment. Please try again.",
         variant: "destructive",
       });
     },
   });
 
   const onSubmit = (data: AppointmentFormData) => {
+    if (!schedule) {
+      toast({
+        title: "Error",
+        description: "Doctor has not set their schedule yet.",
+        variant: "destructive",
+      });
+      return;
+    }
+    // Validate day of week
+    const dayOfWeek = new Date(data.appointmentDate).toLocaleString("en-US", { weekday: "long" });
+    if (!schedule.days.includes(dayOfWeek)) {
+      toast({
+        title: "Error",
+        description: "Doctor not available on selected day.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (data.appointmentTime < schedule.startTime || data.appointmentTime > schedule.endTime) {
+      toast({
+        title: "Error",
+        description: "Doctor not available at selected time.",
+        variant: "destructive",
+      });
+      return;
+    }
     bookAppointmentMutation.mutate(data);
   };
-
-  // Mock doctors for demo
-  const doctors = [
-    { id: "doc1", name: "Dr. Sarah Johnson", specialization: "Cardiology" },
-    { id: "doc2", name: "Dr. Michael Chen", specialization: "Dermatology" },
-    { id: "doc3", name: "Dr. Emily Rodriguez", specialization: "Pediatrics" },
-  ];
-
-  const appointmentTypes = [
-    { value: "general-checkup", label: "General Checkup" },
-    { value: "consultation", label: "Consultation" },
-    { value: "follow-up", label: "Follow-up" },
-    { value: "video-call", label: "Video Consultation" },
-  ];
-
-  const timeSlots = [
-    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-    "14:00", "14:30", "15:00", "15:30", "16:00", "16:30",
-  ];
 
   return (
     <Layout>
@@ -126,7 +187,7 @@ export default function BookAppointment() {
                         </FormControl>
                         <SelectContent>
                           {doctors.map(doctor => (
-                            <SelectItem key={doctor.id} value={doctor.id}>
+                            <SelectItem key={doctor._id} value={doctor._id}>
                               {doctor.name} - {doctor.specialization}
                             </SelectItem>
                           ))}
@@ -136,6 +197,17 @@ export default function BookAppointment() {
                     </FormItem>
                   )}
                 />
+
+                {scheduleError && (
+                  <div className="text-red-600 mb-2">{scheduleError}</div>
+                )}
+
+                {schedule && (
+                  <>
+                    <div className="mb-2">Available Days: {schedule.days.join(", ")}</div>
+                    <div className="mb-2">Time: {schedule.startTime} - {schedule.endTime}</div>
+                  </>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
@@ -173,7 +245,7 @@ export default function BookAppointment() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {timeSlots.map(time => (
+                            {getTimeSlots().map(time => (
                               <SelectItem key={time} value={time}>
                                 {time}
                               </SelectItem>

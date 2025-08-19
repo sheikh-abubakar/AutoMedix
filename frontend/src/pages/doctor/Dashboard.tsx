@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
@@ -6,6 +6,8 @@ import Layout from "@/components/Layout";
 import StatsCard from "@/components/StatsCard";
 import PatientCard from "@/components/PatientCard";
 import { Button } from "@/components/ui/button";
+import SetSchedule from "@/components/SetSchedule";
+import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Calendar,
@@ -22,24 +24,34 @@ import {
   Search
 } from "lucide-react";
 
-// ✅ Define Appointment type
+// Add User type to fix TS error
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  // ...other fields as needed
+}
+
+// Appointment type
 interface Appointment {
   id: string;
   status: string;
-  [key: string]: any; // Allow extra fields from API
+  [key: string]: any;
   appointmentTime: string;
   type: string;
   patient?: {
     name?: string;
+    email?: string;
   };
 }
 
 export default function DoctorDashboard() {
   const { toast } = useToast();
-//  const { logout } = useAuth();
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth() as { isAuthenticated: boolean, isLoading: boolean, user: User | null };
+  const [schedule, setSchedule] = useState<any>(null);
+  const [appointments, setAppointments] = useState<any[]>([]);
 
-  // Redirect to home if not authenticated
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       toast({
@@ -53,19 +65,25 @@ export default function DoctorDashboard() {
     }
   }, [isAuthenticated, isLoading, toast]);
 
-  // ✅ Typed queries with safe defaults
+  useEffect(() => {
+    if (user && user._id) {
+      axios.get(`http://localhost:5000/api/schedule/${user._id}`).then(res => setSchedule(res.data));
+      axios.get(`http://localhost:5000/api/appointments/doctor/${user._id}`).then(res => setAppointments(res.data));
+    }
+  }, [user]);
+
   const {
     data: todayAppointments,
     isLoading: appointmentsLoading,
   } = useQuery<Appointment[]>({
-    queryKey: ['/api/doctors', user?.profile?.id, 'appointments', 'today'],
-    enabled: !!user?.profile?.id,
+    queryKey: ['/api/doctors', user?._id, 'appointments', 'today'],
+    enabled: !!user?._id,
     initialData: [],
   });
 
   const { data: allAppointments } = useQuery<Appointment[]>({
-    queryKey: ['/api/doctors', user?.profile?.id, 'appointments'],
-    enabled: !!user?.profile?.id,
+    queryKey: ['/api/doctors', user?._id, 'appointments'],
+    enabled: !!user?._id,
     initialData: [],
   });
 
@@ -155,10 +173,6 @@ export default function DoctorDashboard() {
               <Plus className="h-4 w-4" />
               <span>New Appointment</span>
             </Button>
-            {/* <Button variant="outline" onClick={logout} data-testid="button-logout">
-              Logout
-            </Button> */}
-
           </div>
         </div>
 
@@ -167,6 +181,39 @@ export default function DoctorDashboard() {
           {statsData.map((stat, index) => (
             <StatsCard key={index} {...stat} />
           ))}
+        </div>
+
+        {/* Doctor Schedule & Appointments */}
+        <div className="mb-8">
+          <SetSchedule
+            doctorId={user && user._id ? user._id : ""}
+            onSaved={() => {
+              if (user && user._id) {
+                axios.get(`http://localhost:5000/api/schedule/${user._id}`).then(res => setSchedule(res.data));
+              }
+            }}
+          />
+          {schedule && schedule.days && (
+            <div className="mb-4">
+              <h4 className="font-bold">Your Current Schedule:</h4>
+              <div>Days: {schedule.days.join(", ")}</div>
+              <div>Time: {schedule.startTime} - {schedule.endTime}</div>
+            </div>
+          )}
+          <div className="mb-4">
+            <h4 className="font-bold">Your Appointments:</h4>
+            {appointments.length === 0 ? (
+              <div>No appointments today</div>
+            ) : (
+              <ul>
+                {appointments.map((app: any) => (
+                  <li key={app._id}>
+                    {app.date} {app.time} - Patient: {app.patient?.name} ({app.patient?.email})
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
