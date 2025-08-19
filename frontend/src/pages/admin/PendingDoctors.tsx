@@ -31,60 +31,67 @@ const PendingDoctors = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="bg-white p-4 rounded shadow">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Pending Doctor Approvals</h2>
-        <button onClick={onClose} className="text-red-500 font-bold">Close</button>
+    <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-200 max-w-4xl mx-auto my-8">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-indigo-700">Pending Doctor Approvals</h2>
+        <button
+          onClick={onClose}
+          className="text-red-600 font-semibold px-3 py-1 rounded hover:bg-red-50 transition"
+        >
+          Close
+        </button>
       </div>
       {loading ? (
-        <div>Loading...</div>
+        <div className="text-center py-8 text-gray-500">Loading...</div>
       ) : doctors.length === 0 ? (
-        <p>No pending doctors.</p>
+        <div className="text-center py-8 text-gray-400">No pending doctors.</div>
       ) : (
-        <table className="min-w-full bg-white border">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Experience</th>
-              <th>Specialization</th>
-              <th>Resume</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {doctors.map((doc) => (
-              <tr key={doc._id}>
-                <td>{doc.name}</td>
-                <td>{doc.email}</td>
-                <td>{doc.experience}</td>
-                <td>{doc.specialization}</td>
-                <td>
-                  <button
-                    onClick={() => handleDownloadResume(doc.resumeUrl)}
-                    className="text-blue-600 underline"
-                  >
-                    Download
-                  </button>
-                </td>
-                <td>
-                  <button
-                    onClick={() => handleApprove(doc._id)}
-                    className="bg-green-500 text-white px-2 py-1 rounded mr-2"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    onClick={() => handleReject(doc._id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded"
-                  >
-                    Reject
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow">
+            <thead>
+              <tr className="bg-indigo-50">
+                <th className="py-3 px-4 text-left font-semibold text-gray-700">Name</th>
+                <th className="py-3 px-4 text-left font-semibold text-gray-700">Email</th>
+                <th className="py-3 px-4 text-left font-semibold text-gray-700">Experience</th>
+                <th className="py-3 px-4 text-left font-semibold text-gray-700">Specialization</th>
+                <th className="py-3 px-4 text-left font-semibold text-gray-700">Resume</th>
+                <th className="py-3 px-4 text-left font-semibold text-gray-700">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {doctors.map((doc, idx) => (
+                <tr key={doc._id} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                  <td className="py-2 px-4">{doc.name}</td>
+                  <td className="py-2 px-4">{doc.email}</td>
+                  <td className="py-2 px-4">{doc.experience}</td>
+                  <td className="py-2 px-4 capitalize">{doc.specialization}</td>
+                  <td className="py-2 px-4">
+                    <button
+                      onClick={() => handleDownloadResume(doc.resumeUrl)}
+                      className="text-indigo-600 underline font-medium hover:text-indigo-800 transition"
+                    >
+                      Download
+                    </button>
+                  </td>
+                  <td className="py-2 px-4 flex gap-2">
+                    <button
+                      onClick={() => handleApprove(doc._id)}
+                      className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg font-semibold transition"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => handleReject(doc._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg font-semibold transition"
+                    >
+                      Reject
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
