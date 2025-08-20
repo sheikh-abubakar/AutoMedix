@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import DoctorProfile from "../models/doctorProfile.model.js";
 
 dotenv.config();
 
@@ -12,7 +13,7 @@ const generateToken = (id, role) => {
 // ======================= REGISTER =======================
 export const registerUser = async (req, res) => {
   try {
-    let { name, email, password, role, profileImageUrl } = req.body;
+    let { name, email, password, role, profileImageUrl, experience, specialization } = req.body;
     role = role ? role.toLowerCase() : "patient";
     console.log("Received data:", { name, email, password, role, profileImageUrl });
 
@@ -26,7 +27,27 @@ export const registerUser = async (req, res) => {
     }
 
     // Create user
-    const user = await User.create({ name, email, password, role , profileImageUrl });
+    const user = await User.create({ name, email, password, role, profileImageUrl, experience, specialization });
+
+
+    // Auto-create doctor profile if role is doctor
+     if (role === "doctor") {
+      await DoctorProfile.create({
+        user_id: user._id,
+        name: user.name,
+        email: user.email,
+        profileImageUrl: user.profileImageUrl,
+        specialty: user.specialization || "",
+        qualifications: "",
+        experience_years: user.experience || 0,
+        hospital_address: "",
+        consultation_fee: 0,
+        bio: "",
+        availability: {},
+        is_approved: false,
+        rating: 0,
+      });
+    }
 
     // Send response
     res.status(201).json({
@@ -60,6 +81,27 @@ export const loginUser = async (req, res) => {
 
     // Match password
     if (user && (await user.matchPassword(password))) {
+      // Auto-create doctor profile if missing
+      if (user.role === "doctor") {
+        const profile = await DoctorProfile.findOne({ user_id: user._id });
+        if (!profile) {
+          await DoctorProfile.create({
+            user_id: user._id,
+            name: user.name,
+            email: user.email,
+            profileImageUrl: user.profileImageUrl,
+            specialty: user.specialization || "",
+            qualifications: "",
+            experience_years: user.experience || 0,
+            hospital_address: "",
+            consultation_fee: 0,
+            bio: "",
+            availability: {},
+            is_approved: false,
+            rating: 0,
+          });
+        }
+      }
       return res.json({
         _id: user._id,
         name: user.name,

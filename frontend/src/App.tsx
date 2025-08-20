@@ -18,6 +18,7 @@ import Signup from "@/pages/auth/Signup";
 import DoctorApprovals from "@/pages/admin/DoctorApprovals";
 import MySchedule from "@/pages/doctor/MySchedule";
 import DoctorAppointments from "@/pages/doctor/Appointments";
+import DoctorProfile from "@/pages/doctor/Profile";
 
 function Router() {
   const { isLoading } = useAuth();
@@ -48,6 +49,7 @@ function Router() {
       <Route path="/admin/doctor-approvals" component={DoctorApprovals} />
       <Route path="/doctor/myschedule" component={MySchedule} />
       <Route path="/doctor/appointments" component={DoctorAppointments} />
+      <Route path="/doctor/profile" component={DoctorProfile} />
       <Route component={NotFound} />
     </Switch>
   );

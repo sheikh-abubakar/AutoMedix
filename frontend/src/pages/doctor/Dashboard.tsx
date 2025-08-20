@@ -164,8 +164,8 @@ export default function DoctorDashboard() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          {statsData.map((stat, index) => (
-            <StatsCard key={index} {...stat} />
+          {statsData.map((stat) => (
+            <StatsCard key={stat.title} {...stat} />
           ))}
         </div>
 
@@ -190,7 +190,10 @@ export default function DoctorDashboard() {
                     {todaysAppointments.map((appointment) => (
                       <PatientCard
                         key={appointment._id || appointment.id}
-                        appointment={appointment}
+                        appointment={{
+                          ...appointment,
+                          appointmentTime: appointment.time // Map 'time' to 'appointmentTime'
+                        }}
                         onView={() => console.log("View patient")}
                         onStartConsultation={() => console.log("Start consultation")}
                         onApprove={() => console.log("Approve appointment")}
@@ -218,9 +221,9 @@ export default function DoctorDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {quickActions.map((action, index) => (
+                  {quickActions.map((action) => (
                     <Button
-                      key={index}
+                      key={action.title}
                       variant="outline"
                       className={`w-full justify-start space-x-3 h-12 
                         ${action.color === 'primary' ? 'border-primary-200 bg-primary-50 hover:bg-primary-100 text-primary-700' :
