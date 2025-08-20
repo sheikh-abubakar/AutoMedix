@@ -6,7 +6,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
-import Home from "@/pages/Home";
 import DoctorDashboard from "@/pages/doctor/Dashboard";
 import PatientDashboard from "@/pages/patient/Dashboard";
 import AdminDashboard from "@/pages/admin/Dashboard";
@@ -17,9 +16,11 @@ import Messages from "@/pages/patient/Messages";
 import Login from "@/pages/auth/Login";
 import Signup from "@/pages/auth/Signup";
 import DoctorApprovals from "@/pages/admin/DoctorApprovals";
+import MySchedule from "@/pages/doctor/MySchedule";
+import DoctorAppointments from "@/pages/doctor/Appointments";
 
 function Router() {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -45,6 +46,8 @@ function Router() {
       <Route path="/health-records" component={HealthRecords} />
       <Route path="/messages" component={Messages} />
       <Route path="/admin/doctor-approvals" component={DoctorApprovals} />
+      <Route path="/doctor/myschedule" component={MySchedule} />
+      <Route path="/doctor/appointments" component={DoctorAppointments} />
       <Route component={NotFound} />
     </Switch>
   );

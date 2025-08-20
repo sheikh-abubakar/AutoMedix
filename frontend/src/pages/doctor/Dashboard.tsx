@@ -101,7 +101,7 @@ export default function DoctorDashboard() {
   const statsData = [
     {
       title: "Today's Appointments",
-      value: todayAppointments?.length || 0,
+      value: appointments?.length || 0,
       change: "+2",
       changeText: "from yesterday",
       icon: Calendar,

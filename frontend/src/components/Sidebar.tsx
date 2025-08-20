@@ -1,28 +1,28 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { 
-  BarChart3, 
-  Calendar, 
-  Users, 
-  FileText, 
-  Video, 
-  Settings, 
+import {
+  BarChart3,
+  Calendar,
+  Users,
+  FileText,
+  Video,
+  Settings,
   LogOut,
   Heart,
   Search,
   UserCheck,
   Shield,
-  PillBottle
+  PillBottle,
+  CalendarPlus
 } from "lucide-react";
-import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "wouter";
 
 const doctorNavItems = [
-  { icon: BarChart3, label: "Dashboard", href: "/dashboard", badge: null },
-  { icon: Calendar, label: "Appointments", href: "/appointments", badge: 12 },
+  { icon: BarChart3, label: "Dashboard", href: "/doctor/dashboard", badge: null },
+  { icon: Calendar, label: "Appointments", href: "/doctor/appointments", badge: 12 },
   { icon: Users, label: "My Patients", href: "/patients", badge: null },
   { icon: FileText, label: "Medical Records", href: "/records", badge: null },
-  { icon: PillBottle, label: "Prescriptions", href: "/prescriptions", badge: null },
+  { icon: CalendarPlus, label: "MySchedule", href: "/doctor/myschedule", badge: null },
   { icon: Video, label: "Video Consultations", href: "/consultations", badge: null },
   { icon: BarChart3, label: "Analytics", href: "/analytics", badge: null },
 ];
@@ -40,7 +40,6 @@ const patientNavItems = [
 const adminNavItems = [
   { icon: BarChart3, label: "Dashboard", href: "/dashboard", badge: null },
   { icon: Users, label: "User Management", href: "/users", badge: null },
-  // Doctor Approvals nav item will navigate to a page
   { icon: UserCheck, label: "Approved doctors", href: "/admin/doctor-approvals", badge: null },
   { icon: Calendar, label: "Appointments", href: "/appointments", badge: null },
   { icon: Shield, label: "System Health", href: "/system", badge: null },
@@ -95,31 +94,9 @@ export default function Sidebar() {
       </div>
       
       <nav className="flex-1 p-4 space-y-2">
-        {navItems.map((item, index) => {
-          // Approved doctors nav item: use Link for navigation
-          if (user?.role === "admin" && item.label === "Approved doctors") {
-            return (
-              <Link to={item.href} key={item.href}>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start space-x-3 h-10 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                  data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
-                >
-                  <item.icon className="h-5 w-5" />
-                  <span className="font-medium flex-1 text-left">{item.label}</span>
-                  {item.badge && (
-                    <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                      {item.badge}
-                    </span>
-                  )}
-                </Button>
-              </Link>
-            );
-          }
-          // Other nav items
-          return (
+        {navItems.map((item) => (
+          <Link to={item.href} key={item.href}>
             <Button
-              key={item.href}
               variant="ghost"
               className="w-full justify-start space-x-3 h-10 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
               data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
@@ -132,8 +109,8 @@ export default function Sidebar() {
                 </span>
               )}
             </Button>
-          );
-        })}
+          </Link>
+        ))}
 
         <div className="border-t border-gray-200 pt-4 mt-4">
           <Button
@@ -156,6 +133,7 @@ export default function Sidebar() {
           </Button>
         </div>
       </nav>
+      
     </aside>
   );
 }
