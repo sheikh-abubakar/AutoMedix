@@ -19,7 +19,7 @@ import { Link } from "wouter";
 
 const doctorNavItems = [
   { icon: BarChart3, label: "Dashboard", href: "/doctor/dashboard", badge: null },
-  { icon: Calendar, label: "Appointments", href: "/doctor/appointments", badge: 12 },
+  { icon: Calendar, label: "Appointments", href: "/doctor/appointments", badge: null },
   { icon: Users, label: "My Patients", href: "/patients", badge: null },
   { icon: FileText, label: "Medical Records", href: "/records", badge: null },
   { icon: CalendarPlus, label: "MySchedule", href: "/doctor/myschedule", badge: null },

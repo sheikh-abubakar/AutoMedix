@@ -2,6 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Bell, Heart, ChevronDown } from "lucide-react";
 
+
 export default function Navbar() {
   const { user } = useAuth();
   const { logout } = useAuth();

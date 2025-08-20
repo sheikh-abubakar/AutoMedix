@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { useQuery } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
 import StatsCard from "@/components/StatsCard";
 import PatientCard from "@/components/PatientCard";
 import { Button } from "@/components/ui/button";
-import SetSchedule from "@/components/SetSchedule";
 import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -35,10 +33,11 @@ interface User {
 
 // Appointment type
 interface Appointment {
-  id: string;
+  id?: string;
+  _id?: string;
   status: string;
-  [key: string]: any;
-  appointmentTime: string;
+  date: string;
+  time: string;
   type: string;
   patient?: {
     name?: string;
@@ -49,8 +48,7 @@ interface Appointment {
 export default function DoctorDashboard() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading, user } = useAuth() as { isAuthenticated: boolean, isLoading: boolean, user: User | null };
-  const [schedule, setSchedule] = useState<any>(null);
-  const [appointments, setAppointments] = useState<any[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -67,58 +65,35 @@ export default function DoctorDashboard() {
 
   useEffect(() => {
     if (user && user._id) {
-      axios.get(`http://localhost:5000/api/schedule/${user._id}`).then(res => setSchedule(res.data));
       axios.get(`http://localhost:5000/api/appointments/doctor/${user._id}`).then(res => setAppointments(res.data));
     }
   }, [user]);
 
-  const {
-    data: todayAppointments,
-    isLoading: appointmentsLoading,
-  } = useQuery<Appointment[]>({
-    queryKey: ['/api/doctors', user?._id, 'appointments', 'today'],
-    enabled: !!user?._id,
-    initialData: [],
-  });
-
-  const { data: allAppointments } = useQuery<Appointment[]>({
-    queryKey: ['/api/doctors', user?._id, 'appointments'],
-    enabled: !!user?._id,
-    initialData: [],
-  });
-
-  if (isLoading || !user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
+  // Today's appointments (filter by today's date)
+  const todayDate = new Date().toISOString().split("T")[0];
+  const todaysAppointments = appointments.filter(app => app.date === todayDate);
 
   const statsData = [
     {
       title: "Today's Appointments",
-      value: appointments?.length || 0,
-      change: "+2",
-      changeText: "from yesterday",
+      value: todaysAppointments.length,
+      change: "",
+      changeText: "",
       icon: Calendar,
       color: "blue",
     },
     {
       title: "Pending Approvals",
-      value: allAppointments?.filter((apt) => apt.status === 'pending')?.length || 0,
+      value: appointments.filter((apt) => apt.status === 'pending').length,
       changeText: "Requires attention",
       icon: Clock,
       color: "yellow",
     },
     {
-      title: "Total Patients",
-      value: "247",
-      change: "+12",
-      changeText: "this month",
+      title: "Total Appointments",
+      value: appointments.length,
+      change: "",
+      changeText: "",
       icon: Users,
       color: "green",
     },
@@ -159,6 +134,17 @@ export default function DoctorDashboard() {
     },
   ];
 
+  if (isLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Layout>
       <div className="p-6">
@@ -183,41 +169,8 @@ export default function DoctorDashboard() {
           ))}
         </div>
 
-        {/* Doctor Schedule & Appointments */}
-        <div className="mb-8">
-          <SetSchedule
-            doctorId={user && user._id ? user._id : ""}
-            onSaved={() => {
-              if (user && user._id) {
-                axios.get(`http://localhost:5000/api/schedule/${user._id}`).then(res => setSchedule(res.data));
-              }
-            }}
-          />
-          {schedule && schedule.days && (
-            <div className="mb-4">
-              <h4 className="font-bold">Your Current Schedule:</h4>
-              <div>Days: {schedule.days.join(", ")}</div>
-              <div>Time: {schedule.startTime} - {schedule.endTime}</div>
-            </div>
-          )}
-          <div className="mb-4">
-            <h4 className="font-bold">Your Appointments:</h4>
-            {appointments.length === 0 ? (
-              <div>No appointments today</div>
-            ) : (
-              <ul>
-                {appointments.map((app: any) => (
-                  <li key={app._id}>
-                    {app.date} {app.time} - Patient: {app.patient?.name} ({app.patient?.email})
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-
+        {/* Today's Schedule: Only show today's appointments */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Today's Schedule */}
           <div className="lg:col-span-2">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0">
@@ -232,19 +185,11 @@ export default function DoctorDashboard() {
                 </div>
               </CardHeader>
               <CardContent>
-                {appointmentsLoading ? (
+                {todaysAppointments.length > 0 ? (
                   <div className="space-y-4">
-                    {[...Array(3)].map((_, i) => (
-                      <div key={i} className="animate-pulse">
-                        <div className="h-20 bg-gray-200 rounded-lg"></div>
-                      </div>
-                    ))}
-                  </div>
-                ) : todayAppointments && todayAppointments.length > 0 ? (
-                  <div className="space-y-4">
-                    {todayAppointments.map((appointment) => (
+                    {todaysAppointments.map((appointment) => (
                       <PatientCard
-                        key={appointment.id}
+                        key={appointment._id || appointment.id}
                         appointment={appointment}
                         onView={() => console.log("View patient")}
                         onStartConsultation={() => console.log("Start consultation")}
