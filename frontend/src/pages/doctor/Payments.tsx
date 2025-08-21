@@ -5,85 +5,67 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Calendar, Clock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { loadStripe } from "@stripe/stripe-js";
 
-type DoctorType = {
+type PatientType = {
   _id: string;
   name: string;
   email: string;
   profileImageUrl?: string;
-  specialization?: string;
 };
 
 type AppointmentType = {
   _id: string;
-  doctor: DoctorType; 
+  patient: PatientType;
   date: string;
   time: string;
+  paymentStatus?: string;
 };
 
-const stripePromise = loadStripe("pk_test_51Rto1H1emUyFYw3azoBkzgv2j3uzPwY60Al3myfvIgqEXrydNRovc8YxO5P4AYEcpdoLOOYRtEGSIcW3J6cPVUol00XyGzzNWq"); 
-
-export default function MyAppointments() {
+export default function Payments() {
   const { user } = useAuth();
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user && user._id) {
-      axios.get(`http://localhost:5000/api/appointments/patient/${user._id}`)
+      axios.get(`http://localhost:5000/api/appointments/doctor/${user._id}`)
         .then(res => setAppointments(res.data))
         .finally(() => setLoading(false));
     }
   }, [user]);
 
-  const handlePayOnline = async (appointmentId: string) => {
-    try {
-      const res = await axios.post("http://localhost:5000/api/payments/create-checkout-session", {
-        appointmentId,
-      });
-      const stripe = await stripePromise;
-      if (stripe && res.data.url) {
-        window.location.href = res.data.url;
-      }
-    } catch (err) {
-      alert("Payment initiation failed.");
-    }
-  };
-
   return (
     <Layout>
       <div className="p-8">
-        <h2 className="text-2xl font-bold mb-2">My Appointments</h2>
-        <p className="mb-6 text-gray-600">View all your booked appointments with doctors.</p>
+        <h2 className="text-2xl font-bold mb-2">My Payments</h2>
+        <p className="mb-6 text-gray-600">See which patients have paid for their appointments.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
             <div className="col-span-full text-center py-16">
               <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-lg text-gray-600">Loading appointments...</p>
+              <p className="text-lg text-gray-600">Loading payments...</p>
             </div>
           ) : appointments.length === 0 ? (
             <div className="col-span-full text-center py-16">
               <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No appointments found</h3>
-              <p className="text-gray-600">You have not booked any appointments yet.</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No payments found</h3>
+              <p className="text-gray-600">No paid appointments yet.</p>
             </div>
           ) : (
             appointments.map(app => (
               <Card key={app._id} className="shadow-md hover:shadow-lg transition-shadow">
                 <CardHeader className="flex items-center space-x-3 border-b">
                   <Avatar>
-                    <AvatarImage src={app.doctor?.profileImageUrl || ""} />
+                    <AvatarImage src={app.patient?.profileImageUrl || ""} />
                     <AvatarFallback>
-                      {app.doctor?.name
-                        ? app.doctor.name.split(" ").map(n => n[0]).join("")
-                        : "DR"}
+                      {app.patient?.name
+                        ? app.patient.name.split(" ").map(n => n[0]).join("")
+                        : "PT"}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <CardTitle className="text-lg">{app.doctor?.name || "Unknown Doctor"}</CardTitle>
-                    <p className="text-sm text-gray-500">{app.doctor?.specialization || ""}</p>
-                    <p className="text-xs text-gray-400">{app.doctor?.email || ""}</p>
+                    <CardTitle className="text-lg">{app.patient?.name || "Unknown Patient"}</CardTitle>
+                    <p className="text-xs text-gray-400">{app.patient?.email || ""}</p>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -95,16 +77,10 @@ export default function MyAppointments() {
                     <Clock className="h-5 w-5 text-blue-500" />
                     <span className="font-medium">{app.time}</span>
                   </div>
-
-                  {/* for Payment */}
-                  
                   <div className="mt-4">
-                    <button
-                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-                      onClick={() => handlePayOnline(app._id)}
-                    >
-                      Pay Online
-                    </button>
+                    <span className={`px-3 py-1 rounded-full text-white ${app.paymentStatus === "paid" ? "bg-green-600" : "bg-yellow-500"}`}>
+                      {app.paymentStatus === "paid" ? "Paid" : "Unpaid"}
+                    </span>
                   </div>
                 </CardContent>
               </Card>

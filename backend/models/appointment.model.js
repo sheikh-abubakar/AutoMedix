@@ -9,7 +9,8 @@ const appointmentSchema = new mongoose.Schema({
   patient: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   date: { type: String, required: true }, // e.g. "2025-08-20"
   time: { type: String, required: true }, // e.g. "10:30"
-  status: { type: String, enum: ["pending", "confirmed", "cancelled"], default: "pending" }
+  status: { type: String, enum: ["pending", "confirmed", "cancelled"], default: "pending" },
+  paymentStatus: { type: String, default: "unpaid" } 
 }, { timestamps: true });
 
 export default mongoose.model("Appointment", appointmentSchema);

@@ -14,7 +14,8 @@ import {
   Shield,
   PillBottle,
   CalendarPlus,
-  MessageCircle
+  MessageCircle,
+  CreditCard
 } from "lucide-react";
 import { Link } from "wouter";
 
@@ -27,6 +28,7 @@ const doctorNavItems = [
   { icon: Video, label: "Video Consultations", href: "/consultations", badge: null },
   { icon: BarChart3, label: "Analytics", href: "/analytics", badge: null },
   { icon: MessageCircle, label: "Messages", href: "/doctor/messages", badge: null },
+  { icon: CreditCard, label: "My Payments", href: "/doctor/payments", badge: null }
 ];
 
 const patientNavItems = [

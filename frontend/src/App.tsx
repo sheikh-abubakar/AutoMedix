@@ -21,6 +21,7 @@ import DoctorAppointments from "@/pages/doctor/Appointments";
 import DoctorProfile from "@/pages/doctor/Profile";
 import DoctorMessages from "@/pages/doctor/Messages";
 import MyAppointments from "@/pages/patient/MyAppointments";
+import Payments from "@/pages/doctor/Payments";
 
 function Router() {
   const { isLoading } = useAuth();
@@ -54,6 +55,7 @@ function Router() {
       <Route path="/doctor/profile" component={DoctorProfile} />
       <Route path="/doctor/messages" component={DoctorMessages} />
       <Route path="/appointments" component={MyAppointments} />
+      <Route path="/doctor/payments" component={Payments} />
       <Route component={NotFound} />
     </Switch>
   );

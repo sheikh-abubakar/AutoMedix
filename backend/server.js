@@ -1,5 +1,6 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+import express from "express";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
@@ -10,8 +11,10 @@ import scheduleRoutes from "./routes/schedule.routes.js";
 import appointmentRoutes from "./routes/appointment.routes.js";
 import doctorProfileRoutes from "./routes/doctorProfile.routes.js";
 import messageRoutes from "./routes/messages.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
+import stripeWebhookRoutes from "./routes/stripeWebhook.routes.js";
 
-dotenv.config();
+
 connectDB();
 
 const app = express();
@@ -20,6 +23,8 @@ app.use(cors({
   origin: "http://localhost:5173",
   credentials: true,
 }));
+
+app.use("/api/stripe", stripeWebhookRoutes); 
 
 app.use(express.json());
 
@@ -31,6 +36,7 @@ app.use("/api/schedule", scheduleRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/doctor-profiles", doctorProfileRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/payments", paymentRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend API is running...");
