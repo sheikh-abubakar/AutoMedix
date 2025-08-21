@@ -13,7 +13,8 @@ import {
   UserCheck,
   Shield,
   PillBottle,
-  CalendarPlus
+  CalendarPlus,
+  MessageCircle
 } from "lucide-react";
 import { Link } from "wouter";
 
@@ -25,6 +26,7 @@ const doctorNavItems = [
   { icon: CalendarPlus, label: "MySchedule", href: "/doctor/myschedule", badge: null },
   { icon: Video, label: "Video Consultations", href: "/consultations", badge: null },
   { icon: BarChart3, label: "Analytics", href: "/analytics", badge: null },
+  { icon: MessageCircle, label: "Messages", href: "/doctor/messages", badge: null },
 ];
 
 const patientNavItems = [

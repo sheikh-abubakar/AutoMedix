@@ -19,6 +19,7 @@ import DoctorApprovals from "@/pages/admin/DoctorApprovals";
 import MySchedule from "@/pages/doctor/MySchedule";
 import DoctorAppointments from "@/pages/doctor/Appointments";
 import DoctorProfile from "@/pages/doctor/Profile";
+import DoctorMessages from "@/pages/doctor/Messages";
 
 function Router() {
   const { isLoading } = useAuth();
@@ -50,6 +51,7 @@ function Router() {
       <Route path="/doctor/myschedule" component={MySchedule} />
       <Route path="/doctor/appointments" component={DoctorAppointments} />
       <Route path="/doctor/profile" component={DoctorProfile} />
+      <Route path="/doctor/messages" component={DoctorMessages} />
       <Route component={NotFound} />
     </Switch>
   );

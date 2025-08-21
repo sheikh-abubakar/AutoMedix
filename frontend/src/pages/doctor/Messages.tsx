@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MessageCircle, User, Phone, Video, Send } from "lucide-react";
+import { MessageCircle, Phone, Video, User, Send } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 type ConversationPartner = {
@@ -31,21 +31,13 @@ type ConversationType = {
   lastMessage?: MessageType;
 };
 
-export default function Messages() {
+export default function DoctorMessages() {
   const { user } = useAuth();
-  const [doctors, setDoctors] = useState<ConversationPartner[]>([]);
   const [conversations, setConversations] = useState<ConversationType[]>([]);
-  const [selectedDoctor, setSelectedDoctor] = useState<ConversationPartner | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<ConversationPartner | null>(null);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [content, setContent] = useState("");
 
-  // Fetch all doctors for sidebar
-  useEffect(() => {
-    axios.get("http://localhost:5000/api/messages/doctors")
-      .then(res => setDoctors(res.data));
-  }, []);
-
-  // Fetch all conversations for patient
   useEffect(() => {
     if (user && user._id) {
       axios.get(`http://localhost:5000/api/messages/conversations/${user._id}`)
@@ -53,103 +45,102 @@ export default function Messages() {
     }
   }, [user]);
 
-  // When doctor selected, show messages if conversation exists
   useEffect(() => {
-    if (selectedDoctor) {
-      const conv = conversations.find(c => c.partner.id === selectedDoctor.id);
+    if (selectedPatient) {
+      const conv = conversations.find(c => c.partner.id === selectedPatient.id);
       setMessages(conv ? conv.messages : []);
     }
-  }, [selectedDoctor, conversations]);
+  }, [selectedPatient, conversations]);
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content || !selectedDoctor || !user) return;
+    if (!content || !selectedPatient || !user) return;
     await axios.post("http://localhost:5000/api/messages", {
       senderId: user._id,
-      receiverId: selectedDoctor.id,
+      receiverId: selectedPatient.id,
       content,
     });
     setContent("");
-    // Refresh conversations/messages
+    // Refresh messages
     axios.get(`http://localhost:5000/api/messages/conversations/${user._id}`)
       .then(res => setConversations(res.data));
   };
 
-  const formatTime = (timestamp: string) =>
-    new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const selectedConversation = selectedPatient
+    ? conversations.find(c => c.partner.id === selectedPatient.id)
+    : undefined;
 
   return (
     <Layout>
       <div className="p-6 h-screen flex flex-col">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Messages</h1>
-          <p className="text-gray-600 mt-1">Communicate with your doctors</p>
+          <p className="text-gray-600 mt-1">Communicate with your patients</p>
         </div>
         <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 min-h-0">
-          {/* Doctors List */}
+          {/* Patients List */}
           <Card className="md:col-span-1">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <MessageCircle className="h-5 w-5" />
-                <span>Doctors</span>
+                <span>Patients</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <ScrollArea className="h-96">
-                {doctors.map(doc => (
+                {conversations.map(conv => (
                   <div
-                    key={doc.id}
+                    key={conv.partner.id}
                     className={`p-4 border-b cursor-pointer hover:bg-gray-50 transition-colors ${
-                      selectedDoctor?.id === doc.id ? "bg-blue-50 border-blue-200" : ""
+                      selectedPatient?.id === conv.partner.id ? "bg-blue-50 border-blue-200" : ""
                     }`}
-                    onClick={() => setSelectedDoctor(doc)}
+                    onClick={() => setSelectedPatient(conv.partner)}
                   >
                     <div className="flex items-start space-x-3">
                       <Avatar className="h-10 w-10">
-                        <AvatarImage src={doc.profileImageUrl || ""} />
+                        <AvatarImage src={conv.partner.profileImageUrl || ""} />
                         <AvatarFallback>
-                          {doc.name.split(" ").map((n: string) => n[0]).join("")}
+                          {conv.partner.name.split(" ").map((n: string) => n[0]).join("")}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <h3 className="font-medium text-gray-900 truncate">{doc.name}</h3>
+                          <h3 className="font-medium text-gray-900 truncate">{conv.partner.name}</h3>
                         </div>
-                        <p className="text-sm text-gray-600 mb-1">{doc.specialization}</p>
-                        {/* Show last message if exists */}
+                        <p className="text-sm text-gray-600 mb-1">{conv.partner.role === "patient" ? "" : conv.partner.specialization}</p>
                         <p className="text-sm text-gray-700 truncate">
-                          {conversations.find(c => c.partner.id === doc.id)?.lastMessage?.content}
+                          {conv.lastMessage?.content}
                         </p>
                       </div>
                     </div>
                   </div>
                 ))}
               </ScrollArea>
-              {doctors.length === 0 && (
+              {conversations.length === 0 && (
                 <div className="p-8 text-center">
                   <MessageCircle className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No doctors found</h3>
-                  <p className="text-gray-600">No doctors available for chat.</p>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No conversations</h3>
+                  <p className="text-gray-600">You will see patients here when they message you.</p>
                 </div>
               )}
             </CardContent>
           </Card>
           {/* Chat Area */}
           <Card className="md:col-span-2 flex flex-col">
-            {selectedDoctor ? (
+            {selectedConversation && selectedPatient ? (
               <>
                 <CardHeader className="border-b">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <Avatar>
-                        <AvatarImage src={selectedDoctor.profileImageUrl || ""} />
+                        <AvatarImage src={selectedPatient.profileImageUrl || ""} />
                         <AvatarFallback>
-                          {selectedDoctor.name.split(" ").map((n: string) => n[0]).join("")}
+                          {selectedPatient.name.split(" ").map((n: string) => n[0]).join("")}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <h3 className="font-medium text-gray-900">{selectedDoctor.name}</h3>
-                        <p className="text-sm text-gray-600">{selectedDoctor.specialization}</p>
+                        <h3 className="font-medium text-gray-900">{selectedPatient.name}</h3>
+                        <p className="text-sm text-gray-600">{selectedPatient.role === "patient" ? "" : selectedPatient.specialization}</p>
                       </div>
                     </div>
                     <div className="flex space-x-2">
@@ -168,7 +159,7 @@ export default function Messages() {
                           }`}>
                             <p className="text-sm">{msg.content}</p>
                             <p className={`text-xs mt-1 ${user && msg.senderId === user._id ? "text-blue-100" : "text-gray-500"}`}>
-                              {formatTime(msg.createdAt)}
+                              {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                             </p>
                           </div>
                         </div>
@@ -192,8 +183,8 @@ export default function Messages() {
               <CardContent className="flex-1 flex items-center justify-center">
                 <div className="text-center">
                   <User className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Select a doctor</h3>
-                  <p className="text-gray-600">Choose a doctor from the list to start messaging.</p>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Select a patient</h3>
+                  <p className="text-gray-600">Choose a patient from the list to start messaging.</p>
                 </div>
               </CardContent>
             )}

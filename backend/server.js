@@ -9,6 +9,7 @@ import doctorRoutes from "./routes/doctors.routes.js";
 import scheduleRoutes from "./routes/schedule.routes.js";
 import appointmentRoutes from "./routes/appointment.routes.js";
 import doctorProfileRoutes from "./routes/doctorProfile.routes.js";
+import messageRoutes from "./routes/messages.routes.js";
 
 dotenv.config();
 connectDB();
@@ -29,6 +30,7 @@ app.use("/api/doctors", doctorRoutes);
 app.use("/api/schedule", scheduleRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/doctor-profiles", doctorProfileRoutes);
+app.use("/api/messages", messageRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend API is running...");
