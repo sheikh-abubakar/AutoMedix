@@ -28,8 +28,8 @@ const doctorNavItems = [
 ];
 
 const patientNavItems = [
-  { icon: BarChart3, label: "Dashboard", href: "/dashboard", badge: null },
-  { icon: Search, label: "Find Doctors", href: "/doctors", badge: null },
+  { icon: BarChart3, label: "Dashboard", href: "/patient/dashboard", badge: null },
+  { icon: Search, label: "Find Doctors", href: "/find-doctors", badge: null },
   { icon: Calendar, label: "My Appointments", href: "/appointments", badge: null },
   { icon: FileText, label: "Health Records", href: "/records", badge: null },
   { icon: PillBottle, label: "Prescriptions", href: "/prescriptions", badge: null },
