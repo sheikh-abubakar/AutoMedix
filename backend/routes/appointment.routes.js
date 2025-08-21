@@ -40,7 +40,8 @@ router.get("/doctor/:doctorId", async (req, res) => {
 // Get appointments for patient
 router.get("/patient/:patientId", async (req, res) => {
   try {
-    const appointments = await Appointment.find({ patient: req.params.patientId }).populate("doctor", "name email specialization");
+    const appointments = await Appointment.find({ patient: req.params.patientId })
+      .populate("doctor", "name email profileImageUrl specialization");
     res.json(appointments);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
