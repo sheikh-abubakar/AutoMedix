@@ -2,8 +2,25 @@ import express from "express";
 import User from "../models/user.model.js";
 import path from "path";
 import axios from "axios";
+import { protect } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
+
+// Get admin profile info
+router.get("/profile/:id", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user || user.role !== "admin") {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+    res.json({
+      email: user.email,
+      profileImageUrl: user.profileImageUrl,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 // Get all pending doctors
 router.get("/pending-doctors", async (req, res) => {

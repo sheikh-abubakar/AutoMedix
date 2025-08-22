@@ -7,7 +7,6 @@ import User from "../models/user.model.js";
 
 const router = express.Router();
 
-console.log("Stripe Key:", process.env.STRIPE_SECRET_KEY);
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Create Stripe Checkout Session for an appointment

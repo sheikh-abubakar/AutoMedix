@@ -9,6 +9,8 @@ export interface User {
   profileImageUrl?: string;
   role?: "patient" | "doctor" | "admin";
   status?: string;
+  age?: number;
+  gender?: string;
 }
 
 export function useAuth() {
@@ -16,15 +18,25 @@ export function useAuth() {
 
   // Load user from localStorage
   const getUserFromLocalStorage = (): User | null => {
-    const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role") as User["role"];
-    const profileImageUrl = localStorage.getItem("profileImageUrl") || undefined;
-    const name = localStorage.getItem("name") || undefined;
-    const status = localStorage.getItem("status") || undefined;
-    const _id = localStorage.getItem("_id") || "";
-    if (!token || !role || !_id) return null;
-    return { _id, role, profileImageUrl, name, status };
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role") as User["role"];
+  const profileImageUrl = localStorage.getItem("profileImageUrl") || undefined;
+  const name = localStorage.getItem("name") || undefined;
+  const status = localStorage.getItem("status") || undefined;
+  const _id = localStorage.getItem("_id") || "";
+  const age = localStorage.getItem("age");      
+  const gender = localStorage.getItem("gender"); 
+  if (!token || !role || !_id) return null;
+  return {
+    _id,
+    role,
+    profileImageUrl,
+    name,
+    status,
+    age: age ? Number(age) : undefined,
+    gender: gender || undefined,
   };
+};
 
   const [user, setUser] = useState<User | null>(getUserFromLocalStorage());
   const [isLoading, setIsLoading] = useState(false);
@@ -38,6 +50,8 @@ export function useAuth() {
     localStorage.setItem("name", userData.name || "");
     localStorage.setItem("status", userData.status || "");
     localStorage.setItem("_id", userData._id || "");
+    if (userData.age !== undefined) localStorage.setItem("age", userData.age.toString());
+    if (userData.gender !== undefined) localStorage.setItem("gender", userData.gender);
   };
 
   // Login
@@ -55,6 +69,8 @@ export function useAuth() {
         name: res.data.name,
         token: res.data.token,
         status: res.data.status,
+        age: res.data.age,
+        gender: res.data.gender,
       };
 
       setUser(userData);
@@ -108,6 +124,8 @@ export function useAuth() {
         name: res.data.name,
         token: res.data.token,
         status: res.data.status,
+        age: res.data.age,
+        gender: res.data.gender,
       };
 
       setUser(userData);
@@ -136,6 +154,8 @@ export function useAuth() {
     localStorage.removeItem("name");
     localStorage.removeItem("status");
     localStorage.removeItem("_id");
+    localStorage.removeItem("age");
+    localStorage.removeItem("gender");
     setUser(null);
     setLocation("/");
   };

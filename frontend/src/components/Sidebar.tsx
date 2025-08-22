@@ -42,7 +42,7 @@ const patientNavItems = [
 ];
 
 const adminNavItems = [
-  { icon: BarChart3, label: "Dashboard", href: "/dashboard", badge: null },
+  { icon: BarChart3, label: "Dashboard", href: "/admin/dashboard", badge: null },
   { icon: Users, label: "User Management", href: "/users", badge: null },
   { icon: UserCheck, label: "Approved doctors", href: "/admin/doctor-approvals", badge: null },
   { icon: Calendar, label: "Appointments", href: "/appointments", badge: null },
