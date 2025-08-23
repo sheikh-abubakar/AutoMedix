@@ -47,7 +47,7 @@ const adminNavItems = [
   { icon: UserCheck, label: "Approved doctors", href: "/admin/doctor-approvals", badge: null },
   { icon: Calendar, label: "Appointments", href: "/appointments", badge: null },
   { icon: Shield, label: "System Health", href: "/system", badge: null },
-  { icon: BarChart3, label: "Analytics", href: "/analytics", badge: null },
+  { icon: BarChart3, label: "Analytics", href: "/admin/analytics", badge: null },
 ];
 
 export default function Sidebar() {

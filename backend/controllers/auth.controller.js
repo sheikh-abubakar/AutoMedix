@@ -29,9 +29,8 @@ export const registerUser = async (req, res) => {
     // Create user
     const user = await User.create({ name, email, password, role, profileImageUrl, experience, specialization });
 
-
     // Auto-create doctor profile if role is doctor
-     if (role === "doctor") {
+    if (role === "doctor") {
       await DoctorProfile.create({
         user_id: user._id,
         name: user.name,
@@ -81,6 +80,10 @@ export const loginUser = async (req, res) => {
 
     // Match password
     if (user && (await user.matchPassword(password))) {
+      // Update lastLogin for daily active users analytics
+      user.lastLogin = new Date();
+      await user.save();
+
       // Auto-create doctor profile if missing
       if (user.role === "doctor") {
         const profile = await DoctorProfile.findOne({ user_id: user._id });

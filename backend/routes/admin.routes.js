@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import path from "path";
 import axios from "axios";
 import { protect } from "../middlewares/auth.middleware.js";
+import Appointment from "../models/appointment.model.js";
 
 const router = express.Router();
 
@@ -81,6 +82,89 @@ router.get("/download-resume/:id", async (req, res) => {
 router.get("/approved-doctors", async (req, res) => {
   const approvedDoctors = await User.find({ role: "doctor", status: "approved" });
   res.json(approvedDoctors);
+});
+
+// Analytics endpoint
+router.get("/analytics", protect, async (req, res) => {
+  try {
+    // Total users
+    const totalUsers = await User.countDocuments();
+    // Total doctors
+    const totalDoctors = await User.countDocuments({ role: "doctor" });
+    // Total patients
+    const totalPatients = await User.countDocuments({ role: "patient" });
+
+    // Daily active users (logged in today)
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+    const dailyActiveUsers = await User.countDocuments({
+      lastLogin: { $gte: todayStart, $lte: todayEnd }
+    });
+
+    // Total appointments
+    const totalAppointments = await Appointment.countDocuments();
+
+    // Appointments per day (last 14 days)
+    const fourteenDaysAgo = new Date();
+    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 13);
+    fourteenDaysAgo.setHours(0, 0, 0, 0);
+
+    const appointmentsPerDay = await Appointment.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: fourteenDaysAgo }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    // Doctor approval rate
+    const approvedDoctors = await User.countDocuments({ role: "doctor", status: "approved" });
+    const pendingDoctors = await User.countDocuments({ role: "doctor", status: "pending" });
+
+    // Patient registrations per day (last 14 days)
+    const patientRegistrationsPerDay = await User.aggregate([
+      {
+        $match: {
+          role: "patient",
+          createdAt: { $gte: fourteenDaysAgo }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    res.json({
+      totalUsers,
+      totalDoctors,
+      totalPatients,
+      dailyActiveUsers,
+      totalAppointments,
+      appointmentsPerDay,
+      approvedDoctors,
+      pendingDoctors,
+      patientRegistrationsPerDay
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 export default router;

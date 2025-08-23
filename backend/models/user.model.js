@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ["admin", "doctor", "patient"], default: "patient" },
   profileImageUrl: { type: String, required: true },
-
+  lastLogin: { type: Date },
+  
   // Patient-specific fields
   age: { type: Number },
   gender: { type: String, enum: ["male", "female", "other"] },
@@ -31,7 +32,9 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 export default mongoose.model("User", userSchema);
-// import mongoose from "mongoose";
+
+
+
 // import bcrypt from "bcrypt";
 
 // const userSchema = new mongoose.Schema({

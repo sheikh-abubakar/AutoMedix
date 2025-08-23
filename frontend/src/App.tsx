@@ -24,6 +24,7 @@ import MyAppointments from "@/pages/patient/MyAppointments";
 import Payments from "@/pages/doctor/Payments";
 import PatientProfile from "@/pages/patient/PatientProfile";
 import AdminProfile from "@/pages/admin/AdminProfile";
+import Analytics from "@/pages/admin/Analytics";
 
 function Router() {
   const { isLoading } = useAuth();
@@ -60,6 +61,7 @@ function Router() {
       <Route path="/doctor/payments" component={Payments} />
       <Route path="/patient/profile" component={PatientProfile} />
       <Route path="/admin/profile" component={AdminProfile} />
+      <Route path="/admin/analytics" component={Analytics} />
       <Route component={NotFound} />
     </Switch>
   );
