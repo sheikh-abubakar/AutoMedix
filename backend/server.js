@@ -14,6 +14,7 @@ import messageRoutes from "./routes/messages.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
 import stripeWebhookRoutes from "./routes/stripeWebhook.routes.js";
 import patientRoutes from "./routes/patient.routes.js";
+import reportRoutes from "./routes/reports.routes.js";
 
 
 connectDB();
@@ -39,6 +40,7 @@ app.use("/api/doctor-profiles", doctorProfileRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/patient", patientRoutes);
+app.use("/api/reports", reportRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend API is running...");
