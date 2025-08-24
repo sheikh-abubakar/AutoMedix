@@ -21,9 +21,15 @@ const PendingDoctors = ({ onClose }: { onClose: () => void }) => {
     fetchPendingDoctors();
   };
 
-  const handleReject = async (id: string) => {
-    await axios.post(`http://localhost:5000/api/admin/reject-doctor/${id}`);
-    fetchPendingDoctors();
+  const handleReject = async (doctorId: string) => {
+    try {
+      await fetch(`http://localhost:5000/api/admin/reject-doctor/${doctorId}`, {
+        method: "DELETE",
+      });
+      // Optionally refresh the list or show a toast
+    } catch (err) {
+      // Handle error
+    }
   };
 
   const handleDownloadResume = (resumeUrl: string) => {

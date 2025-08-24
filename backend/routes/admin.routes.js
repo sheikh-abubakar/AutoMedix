@@ -1,5 +1,6 @@
 import express from "express";
 import User from "../models/user.model.js";
+import DoctorProfile from "../models/doctorProfile.model.js";
 import path from "path";
 import axios from "axios";
 import { protect } from "../middlewares/auth.middleware.js";
@@ -163,6 +164,21 @@ router.get("/analytics", protect, async (req, res) => {
       patientRegistrationsPerDay
     });
   } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Reject Doctor (Delete doctor and profile)
+router.delete("/reject-doctor/:id", async (req, res) => {
+  try {
+    const doctorId = req.params.id;
+    // Delete doctor user
+    await User.findByIdAndDelete(doctorId);
+    // Delete doctor profile
+    await DoctorProfile.deleteOne({ user_id: doctorId });
+    res.status(200).json({ message: "Doctor record deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting doctor:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
