@@ -67,9 +67,11 @@ export default function MedicalRecords() {
   };
 
   return (
-    <div className="p-8 flex flex-col items-center justify-center">
-      <h2 className="text-2xl font-bold mb-6 text-center">Received Reports</h2>
-      <div className="w-full max-w-md mx-auto flex flex-col gap-6">
+  <div className="p-8 flex flex-col items-center min-h-screen" style={{ background: 'linear-gradient(135deg, #e0f7fa 0%, #b3e5fc 100%)' }}>
+      <h2 className="mb-8 text-4xl font-extrabold text-center tracking-wide text-sky-700 drop-shadow-lg" style={{ letterSpacing: '2px', textTransform: 'uppercase', marginTop: '40px' }}>
+        <span style={{ borderBottom: '4px solid #0288d1', paddingBottom: '6px', borderRadius: '4px' }}>Received Reports</span>
+      </h2>
+      <div className="w-full max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 justify-center" style={{ marginTop: '0px' }}>
         {reports.map(report => (
           <div key={report._id} className="border rounded-xl p-6 bg-white shadow flex flex-col gap-2">
             <div className="font-semibold text-lg mb-1">From: <span className="text-blue-700">{report.patientName}</span></div>
@@ -80,7 +82,7 @@ export default function MedicalRecords() {
       </div>
       {selectedReport && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm relative border border-gray-200">
+          <div className="bg-white rounded-2xl shadow-2xl p-10 w-full max-w-lg relative border border-gray-200">
             <button
               className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl font-bold"
               onClick={() => setSelectedReport(null)}

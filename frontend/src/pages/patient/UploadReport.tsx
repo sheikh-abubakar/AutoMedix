@@ -129,8 +129,7 @@ export default function UploadReport() {
               </div>
             ))}
           </div>
-
-          {/* Modal for sharing report */}
+          {/* Modal for sharing report (only modal shows chat) */}
           {showModal && selectedDoctor && (
             <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
               <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative border border-gray-200">
@@ -150,7 +149,19 @@ export default function UploadReport() {
                 <Button onClick={handleUpload} className="mb-6 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg">Submit</Button>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Message to Doctor</label>
-                  <MessageBox chat={chat} onSend={handleSendMessage} message={message} setMessage={setMessage} />
+                  {/* Only show input and send button, not chat history */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={message}
+                      onChange={e => setMessage(e.target.value)}
+                      className="border rounded px-2 py-1 flex-1"
+                      placeholder="Type your message..."
+                    />
+                    <Button onClick={handleSendMessage} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 rounded-lg">
+                      Send
+                    </Button>
+                  </div>
                 </div>
                 {reportStatus && (
                   <div className="mt-2 text-green-600 font-semibold text-center text-base">{reportStatus}</div>
