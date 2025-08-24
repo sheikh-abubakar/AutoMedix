@@ -67,9 +67,9 @@ export default function MedicalRecords() {
   };
 
   return (
-  <div className="p-8 flex flex-col items-center min-h-screen" style={{ background: 'linear-gradient(135deg, #e0f7fa 0%, #b3e5fc 100%)' }}>
+  <div className="p-8 flex flex-col items-center min-h-screen bg-white">
       <h2 className="mb-8 text-4xl font-extrabold text-center tracking-wide text-sky-700 drop-shadow-lg" style={{ letterSpacing: '2px', textTransform: 'uppercase', marginTop: '40px' }}>
-        <span style={{ borderBottom: '4px solid #0288d1', paddingBottom: '6px', borderRadius: '4px' }}>Received Reports</span>
+        <span style={{ borderBottom: '4px solid #d0ebf8ff', paddingBottom: '6px', borderRadius: '4px' }}>Received Reports</span>
       </h2>
       <div className="w-full max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 justify-center" style={{ marginTop: '0px' }}>
         {reports.map(report => (
