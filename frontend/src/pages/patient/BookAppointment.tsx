@@ -108,7 +108,7 @@ export default function BookAppointment() {
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Appointment booked successfully! You will receive a confirmation shortly.",
+        description: "Appointment booked successfully!",
       });
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
@@ -160,43 +160,32 @@ export default function BookAppointment() {
           <p className="text-gray-600 mt-1">Schedule a consultation with your preferred doctor</p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Calendar className="h-5 w-5" />
-              <span>Appointment Details</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
+        <div className="max-w-xl mx-auto mt-10">
+          <Card className="rounded-2xl shadow-lg border border-gray-200 bg-white">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+                <Calendar className="h-6 w-6 text-blue-600" />
+                Appointment Details
+              </CardTitle>
+              <p className="text-gray-500">Schedule a consultation with your preferred doctor</p>
+            </CardHeader>
+            <CardContent>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="doctorId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center space-x-2">
-                        <User className="h-4 w-4" />
-                        <span>Select Doctor</span>
-                      </FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger data-testid="select-doctor">
-                            <SelectValue placeholder="Choose a doctor..." />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {doctors.map(doctor => (
-                            <SelectItem key={doctor._id} value={doctor._id}>
-                              {doctor.name} - {doctor.specialization}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* Doctor Select */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Select Doctor</label>
+                  <select
+                    value={form.watch("doctorId")}
+                    onChange={e => form.setValue("doctorId", e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    required
+                  >
+                    <option value="">Choose a doctor...</option>
+                    {doctors.map(doc => (
+                      <option key={doc._id} value={doc._id}>{doc.name} ({doc.specialization})</option>
+                    ))}
+                  </select>
+                </div>
 
                 {scheduleError && (
                   <div className="text-red-600 mb-2">{scheduleError}</div>
@@ -210,122 +199,67 @@ export default function BookAppointment() {
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="appointmentDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Date</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="date"
-                            {...field}
-                            min={new Date().toISOString().split('T')[0]}
-                            data-testid="input-appointment-date"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <input
+                      type="date"
+                      value={form.watch("appointmentDate")}
+                      onChange={e => form.setValue("appointmentDate", e.target.value)}
+                      className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                      min={new Date().toISOString().split('T')[0]}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                    <select
+                      value={form.watch("appointmentTime")}
+                      onChange={e => form.setValue("appointmentTime", e.target.value)}
+                      className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                      required
+                    >
+                      <option value="">Select time...</option>
+                      {getTimeSlots().map(time => (
+                        <option key={time} value={time}>
+                          {time}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
-                  <FormField
-                    control={form.control}
-                    name="appointmentTime"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center space-x-2">
-                          <Clock className="h-4 w-4" />
-                          <span>Time</span>
-                        </FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger data-testid="select-appointment-time">
-                              <SelectValue placeholder="Select time..." />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {getTimeSlots().map(time => (
-                              <SelectItem key={time} value={time}>
-                                {time}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Appointment Type</label>
+                  <select
+                    value={form.watch("type")}
+                    onChange={e => form.setValue("type", e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    required
+                  >
+                    <option value="">Select appointment type...</option>
+                    {appointmentTypes.map(type => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Symptoms / Additional Notes (Optional)</label>
+                  <textarea
+                    value={form.watch("notes")}
+                    onChange={e => form.setValue("notes", e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    rows={3}
+                    placeholder="Describe your symptoms or add any notes for the doctor..."
                   />
                 </div>
 
-                <FormField
-                  control={form.control}
-                  name="type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Appointment Type</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger data-testid="select-appointment-type">
-                            <SelectValue placeholder="Select appointment type..." />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {appointmentTypes.map(type => (
-                            <SelectItem key={type.value} value={type.value}>
-                              {type.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="symptoms"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Symptoms (Optional)</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Describe your symptoms..."
-                          {...field}
-                          data-testid="textarea-symptoms"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="notes"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center space-x-2">
-                        <FileText className="h-4 w-4" />
-                        <span>Additional Notes (Optional)</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Any additional information for the doctor..."
-                          {...field}
-                          data-testid="textarea-notes"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex space-x-4 pt-4">
+                <div className="flex justify-between mt-6">
                   <Button
                     type="submit"
-                    className="flex-1"
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-blue-700 transition"
                     disabled={bookAppointmentMutation.isPending}
                     data-testid="button-book-appointment"
                   >
@@ -342,9 +276,9 @@ export default function BookAppointment() {
                   </Button>
                 </div>
               </form>
-            </Form>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </Layout>
   );

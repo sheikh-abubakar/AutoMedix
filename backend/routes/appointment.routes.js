@@ -10,6 +10,7 @@ router.post("/book", async (req, res) => {
     const { doctorId, patientId, date, time } = req.body;
     const schedule = await Schedule.findOne({ doctor: doctorId });
     if (!schedule) return res.status(400).json({ message: "Doctor schedule not found" });
+
     const dayOfWeek = new Date(date).toLocaleString("en-US", { weekday: "long" });
     if (!schedule.days.includes(dayOfWeek)) {
       return res.status(400).json({ message: "Doctor not available on this day" });
@@ -17,8 +18,16 @@ router.post("/book", async (req, res) => {
     if (time < schedule.startTime || time > schedule.endTime) {
       return res.status(400).json({ message: "Doctor not available at this time" });
     }
+
+    // Condition 1: Max 4 appointments per doctor per day
+    const dailyCount = await Appointment.countDocuments({ doctor: doctorId, date });
+    if (dailyCount >= 4) {
+      return res.status(400).json({ message: "Slots filled for this day. Please choose another day." });
+    }
+
+    // Condition 2: Only one appointment per time slot
     const exists = await Appointment.findOne({ doctor: doctorId, date, time });
-    if (exists) return res.status(400).json({ message: "Slot already booked" });
+    if (exists) return res.status(400).json({ message: "This time slot is already booked." });
 
     const appointment = await Appointment.create({ doctor: doctorId, patient: patientId, date, time });
     res.json(appointment);
