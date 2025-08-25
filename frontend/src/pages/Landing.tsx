@@ -9,6 +9,7 @@ export default function Landing() {
   const [, setLocation] = useLocation();
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [current, setCurrent] = useState(0);
+  const visibleCards = 3; // Number of cards to show at once
 
   useEffect(() => {
     axios.get("http://localhost:5000/api/feedback/feedbacks").then(res => {
@@ -17,6 +18,16 @@ export default function Landing() {
     });
   }, []);
 
+  useEffect(() => {
+    if (!testimonials.length) return;
+    const interval = setInterval(() => {
+      setCurrent(prev =>
+        prev >= testimonials.length - visibleCards ? 0 : prev + 1
+      );
+    }, 3500); // Change slide every 3.5 seconds
+    return () => clearInterval(interval);
+  }, [testimonials, visibleCards]);
+
   const handleLogin = () => {
     setLocation("/login");
   };
@@ -24,8 +35,6 @@ export default function Landing() {
   const handleSignup = () => {
     setLocation("/signup");
   };
-
-  const visibleCards = 3; // Number of cards to show at once
 
   const handlePrev = () => {
     setCurrent(current > 0 ? current - 1 : 0);
@@ -264,12 +273,11 @@ export default function Landing() {
               </svg>
             </button>
             {/* Cards */}
-            <div className="w-full px-16 overflow-hidden">
+            <div className="flex gap-8 overflow-hidden w-full justify-center">
               <div
-                className="flex gap-8 transition-transform duration-500"
+                className="flex gap-8 transition-transform duration-700"
                 style={{
-                  transform: `translateX(-${current * (350 + 32)}px)`,
-                  paddingTop: "48px", // enough space for circle
+                  transform: `translateX(-${current * (350 + 32)}px)` // 350px card + 32px gap
                 }}
               >
                 {testimonials.map((fb, i) => {
@@ -286,7 +294,7 @@ export default function Landing() {
                       style={{
                         borderBottom: `16px solid ${color.border}`,
                         background: "#f9fafb",
-                        marginTop: "40px", // so circle doesn't get cut
+                        marginTop: "40px", 
                       }}
                     >
                       {/* Top Circle with Profile */}
