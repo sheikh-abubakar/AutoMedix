@@ -48,4 +48,16 @@ router.get("/patient/:patientId", async (req, res) => {
   }
 });
 
+// Cancel appointment
+router.delete("/:appointmentId", async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+    const deleted = await Appointment.findByIdAndDelete(appointmentId);
+    if (!deleted) return res.status(404).json({ message: "Appointment not found" });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;

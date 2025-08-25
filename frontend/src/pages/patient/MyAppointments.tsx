@@ -3,7 +3,7 @@ import axios from "axios";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Clock, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { loadStripe } from "@stripe/stripe-js";
 
@@ -51,6 +51,16 @@ export default function MyAppointments() {
     }
   };
 
+  const handleCancel = async (appointmentId: string) => {
+    if (!window.confirm("Are you sure you want to cancel this appointment?")) return;
+    try {
+      await axios.delete(`http://localhost:5000/api/appointments/${appointmentId}`);
+      setAppointments(prev => prev.filter(app => app._id !== appointmentId));
+    } catch (err) {
+      alert("Failed to cancel appointment.");
+    }
+  };
+
   return (
     <Layout>
       <div className="p-8">
@@ -70,7 +80,7 @@ export default function MyAppointments() {
             </div>
           ) : (
             appointments.map(app => (
-              <Card key={app._id} className="shadow-md hover:shadow-lg transition-shadow">
+              <Card key={app._id} className="shadow-md hover:shadow-lg transition-shadow relative">
                 <CardHeader className="flex items-center space-x-3 border-b">
                   <Avatar>
                     <AvatarImage src={app.doctor?.profileImageUrl || ""} />
@@ -87,23 +97,27 @@ export default function MyAppointments() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center space-x-4 mb-2">
+                  <div className="flex items-center space-x-4 mb-2 justify-center">
                     <Calendar className="h-5 w-5 text-blue-500" />
                     <span className="font-medium">{new Date(app.date).toLocaleDateString()}</span>
-                  </div>
-                  <div className="flex items-center space-x-4 mb-2">
-                    <Clock className="h-5 w-5 text-blue-500" />
+                    <Clock className="h-5 w-5 text-blue-500 ml-4" />
                     <span className="font-medium">{app.time}</span>
                   </div>
 
-                  {/* for Payment */}
-                  
-                  <div className="mt-4">
+                  {/* Centered Buttons */}
+                  <div className="flex justify-center gap-4 mt-6">
                     <button
-                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                      className="bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold shadow hover:bg-blue-700 transition flex items-center"
                       onClick={() => handlePayOnline(app._id)}
                     >
                       Pay Online
+                    </button>
+                    <button
+                      className="bg-red-600 text-white px-5 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition flex items-center"
+                      onClick={() => handleCancel(app._id)}
+                    >
+                      <X className="h-5 w-5 mr-2" />
+                      Cancel 
                     </button>
                   </div>
                 </CardContent>
