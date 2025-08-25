@@ -75,25 +75,27 @@ export default function PatientProfile() {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
-      <div className="flex-1 bg-gray-50">
+      <div className="flex-1">
         <Navbar />
-        <div className="max-w-xl mx-auto mt-10">
-          <Card>
-            <CardHeader className="flex flex-col items-center">
-              <img
-                src={form.profileImageUrl || "https://ui-avatars.com/api/?name=Patient"}
-                alt="Profile"
-                className="h-24 w-24 rounded-full object-cover mb-2"
-              />
-              <CardTitle className="text-2xl">{form.name}</CardTitle>
+        <div className="max-w-lg mx-auto mt-12">
+          <Card className="rounded-2xl shadow-lg border border-gray-200 bg-white">
+            <CardHeader className="flex flex-col items-center pb-0">
+              <div className="relative">
+                <img
+                  src={form.profileImageUrl || "https://ui-avatars.com/api/?name=Patient"}
+                  alt="Profile"
+                  className="h-28 w-28 rounded-full object-cover border-4 border-gray-200 shadow"
+                />
+              </div>
+              <CardTitle className="text-2xl font-bold text-gray-800 mt-4">{form.name}</CardTitle>
               <p className="text-gray-500">{form.email}</p>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">Age</span>
+              <div className="space-y-6 mt-6">
+                <div className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                  <span className="font-medium text-gray-700">Age</span>
                   {editField === "age" ? (
                     <input
                       type="number"
@@ -104,14 +106,14 @@ export default function PatientProfile() {
                       disabled={loading}
                     />
                   ) : (
-                    <span>{form.age}</span>
+                    <span className="text-gray-900">{form.age}</span>
                   )}
                   <button onClick={() => setEditField("age")}>
-                    <Pencil className="h-4 w-4 text-blue-500" />
+                    <Pencil className="h-4 w-4 text-gray-500" />
                   </button>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">Gender</span>
+                <div className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                  <span className="font-medium text-gray-700">Gender</span>
                   {editField === "gender" ? (
                     <select
                       value={form.gender}
@@ -126,10 +128,10 @@ export default function PatientProfile() {
                       <option value="other">Other</option>
                     </select>
                   ) : (
-                    <span>{form.gender}</span>
+                    <span className="text-gray-900">{form.gender}</span>
                   )}
                   <button onClick={() => setEditField("gender")}>
-                    <Pencil className="h-4 w-4 text-blue-500" />
+                    <Pencil className="h-4 w-4 text-gray-500" />
                   </button>
                 </div>
               </div>
