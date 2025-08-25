@@ -15,7 +15,7 @@ import paymentRoutes from "./routes/payment.routes.js";
 import stripeWebhookRoutes from "./routes/stripeWebhook.routes.js";
 import patientRoutes from "./routes/patient.routes.js";
 import reportRoutes from "./routes/reports.routes.js";
-import feedbackRouter from "./controllers/feedback.routes.js"; // or correct path
+import feedbackRouter from "./routes/feedback.routes.js"; // or correct path
 import prescriptionRoutes from "./routes/prescription.routes.js";
 
 connectDB();
