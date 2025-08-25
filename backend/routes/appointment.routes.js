@@ -39,7 +39,17 @@ router.post("/book", async (req, res) => {
 // Get appointments for doctor
 router.get("/doctor/:doctorId", async (req, res) => {
   try {
-    const appointments = await Appointment.find({ doctor: req.params.doctorId }).populate("patient", "name email");
+    const now = new Date();
+    const today = now.toISOString().slice(0, 10); // "YYYY-MM-DD"
+    const currentTime = now.toTimeString().slice(0, 5); // "HH:MM"
+
+    const appointments = await Appointment.find({
+      doctor: req.params.doctorId,
+      $or: [
+        { date: { $gt: today } },
+        { date: today, time: { $gte: currentTime } }
+      ]
+    }).populate("patient", "name email");
     res.json(appointments);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
@@ -49,7 +59,17 @@ router.get("/doctor/:doctorId", async (req, res) => {
 // Get appointments for patient
 router.get("/patient/:patientId", async (req, res) => {
   try {
-    const appointments = await Appointment.find({ patient: req.params.patientId })
+    const now = new Date();
+    const today = now.toISOString().slice(0, 10); // "YYYY-MM-DD"
+    const currentTime = now.toTimeString().slice(0, 5); // "HH:MM"
+
+    const appointments = await Appointment.find({
+      patient: req.params.patientId,
+      $or: [
+        { date: { $gt: today } },
+        { date: today, time: { $gte: currentTime } }
+      ]
+    })
       .populate("doctor", "name email profileImageUrl specialization");
     res.json(appointments);
   } catch (error) {
