@@ -28,6 +28,8 @@ import Analytics from "@/pages/admin/Analytics";
 import UploadReport from "@/pages/patient/UploadReport";
 import MedicalRecords from "./pages/doctor/MedicalRecords";
 import Feedback from "@/pages/patient/Feedback";
+import Prescriptions from "@/pages/patient/Prescriptions";
+import CreatePrescription from "@/pages/doctor/CreatePrescription";
 
 function Router() {
   const { isLoading } = useAuth();
@@ -68,6 +70,8 @@ function Router() {
       <Route path="/upload-report" component={UploadReport} />
       <Route path="/doctor/medical-records" component={MedicalRecords} />
       <Route path="/patient/feedback" component={Feedback} />
+      <Route path="/prescriptions" component={Prescriptions} />
+      <Route path="/doctor/create-prescription" component={CreatePrescription} />
       <Route component={NotFound} />
     </Switch>
   );

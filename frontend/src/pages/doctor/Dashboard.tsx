@@ -109,16 +109,10 @@ export default function DoctorDashboard() {
 
   const quickActions = [
     {
-      title: "Schedule Appointment",
-      icon: CalendarPlus,
-      color: "primary",
-      onClick: () => console.log("Schedule appointment"),
-    },
-    {
       title: "Create Prescription",
       icon: FileText,
       color: "green",
-      onClick: () => console.log("Create prescription"),
+      onClick: () => window.location.href = "/doctor/create-prescription",
     },
     {
       title: "View Medical Records",
