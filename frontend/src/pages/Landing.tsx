@@ -3,19 +3,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Calendar, FileText, Video, Shield, Star, CheckCircle } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState, useEffect } from "react";
-import Slider from "react-slick";
 import axios from "axios";
 
 export default function Landing() {
   const [, setLocation] = useLocation();
   const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [current, setCurrent] = useState(0);
+
   useEffect(() => {
-  axios.get("http://localhost:5000/api/feedback/feedbacks").then(res => {
-      console.log("Testimonials API response:", res.data);
+    axios.get("http://localhost:5000/api/feedback/feedbacks").then(res => {
       if (Array.isArray(res.data)) setTestimonials(res.data);
       else setTestimonials([]);
-    }).catch(err => {
-      console.error("Testimonials API error:", err);
     });
   }, []);
 
@@ -25,6 +23,16 @@ export default function Landing() {
 
   const handleSignup = () => {
     setLocation("/signup");
+  };
+
+  const visibleCards = 3; // Number of cards to show at once
+
+  const handlePrev = () => {
+    setCurrent(current > 0 ? current - 1 : 0);
+  };
+
+  const handleNext = () => {
+    setCurrent(current < testimonials.length - visibleCards ? current + 1 : current);
   };
 
   return (
@@ -234,7 +242,7 @@ export default function Landing() {
       {/* Testimonials Slider Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               What Our Users Say
             </h2>
@@ -242,22 +250,98 @@ export default function Landing() {
               Real feedback from our patients and doctors
             </p>
           </div>
-          <div className="flex gap-6 overflow-x-auto pb-4 hide-scrollbar">
-            {testimonials.map((fb, i) => (
-              <div key={i} className="min-w-[320px] max-w-xs flex-shrink-0">
-                <div className="bg-gray-100 rounded-xl shadow-lg p-6 flex flex-col items-center transition-all duration-300 min-h-[260px]">
-                  <img src={fb.profileImageUrl || '/default-avatar.png'} alt={fb.name || 'User'} className="h-14 w-14 rounded-full mb-3 object-cover border-2 border-indigo-200" />
-                  <div className="font-semibold text-base mb-1 text-gray-2000">{fb.name || "Anonymous"}</div>
-                  <div className="flex justify-center mb-2">
-                    {[1,2,3,4,5].map(star => (
-                      <span key={star} className={`text-yellow-400 text-lg ${star <= fb.rating ? '' : 'opacity-30'}`}>★</span>
-                    ))}
-                  </div>
-                  <p className="text-gray-600 mb-2 text-center italic">{fb.comment ? `"${fb.comment}"` : "No comment."}</p>
-                  <div className="text-center text-xs text-indigo-500">{fb.role}</div>
-                </div>
+          <div className="relative flex items-center">
+            {/* Back Arrow */}
+            <button
+              onClick={handlePrev}
+              className="absolute left-4 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-indigo-100 transition"
+              disabled={current === 0}
+              aria-label="Previous"
+              style={{ top: "50%", transform: "translateY(-50%)" }}
+            >
+              <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
+                <path d="M15 19l-7-7 7-7" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            {/* Cards */}
+            <div className="w-full px-16 overflow-hidden">
+              <div
+                className="flex gap-8 transition-transform duration-500"
+                style={{
+                  transform: `translateX(-${current * (350 + 32)}px)`,
+                  paddingTop: "48px", // enough space for circle
+                }}
+              >
+                {testimonials.map((fb, i) => {
+                  const colors = [
+                    { border: "#6EE7B7", circle: "#D1FAE5" }, // green
+                    { border: "#C4B5FD", circle: "#EDE9FE" }, // purple
+                    { border: "#7DD3FC", circle: "#E0F2FE" }, // blue
+                  ];
+                  const color = colors[i % colors.length];
+                  return (
+                    <div
+                      key={i}
+                      className="relative bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center min-w-[350px] max-w-[350px] mx-auto border border-gray-100"
+                      style={{
+                        borderBottom: `16px solid ${color.border}`,
+                        background: "#f9fafb",
+                        marginTop: "40px", // so circle doesn't get cut
+                      }}
+                    >
+                      {/* Top Circle with Profile */}
+                      <div
+                        className="absolute left-1/2 -translate-x-1/2 -top-14 z-20 flex items-center justify-center overflow-hidden"
+                        style={{
+                          width: "90px",
+                          height: "90px",
+                          background: color.circle,
+                          borderRadius: "50%",
+                          border: "4px solid #fff",
+                          boxShadow: "0 4px 8px rgba(0,0,0,0.08)"
+                        }}
+                      >
+                        <img
+                          src={fb.profileImageUrl || "/default-user.png"}
+                          alt={fb.name}
+                          style={{
+                            width: "78px",
+                            height: "78px",
+                            borderRadius: "50%",
+                            objectFit: "cover"
+                          }}
+                        />
+                      </div>
+                      <div className="mb-4 mt-12">
+                        <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
+                          <path d="M7 17a4 4 0 0 1 4-4h1V7a4 4 0 1 0-8 0v6a4 4 0 0 0 4 4zm10 0a4 4 0 0 1 4-4h-1V7a4 4 0 1 0-8 0v6a4 4 0 0 0 4 4z" fill={color.border}/>
+                        </svg>
+                      </div>
+                      <div className="font-bold text-xl text-gray-900 mb-1">{fb.name || "Anonymous"}</div>
+                      <div className="text-sm text-indigo-500 mb-2">{fb.role}</div>
+                      <div className="flex justify-center mb-3">
+                        {[...Array(fb.rating)].map((_, idx) => (
+                          <span key={idx} className="text-yellow-400 text-xl">★</span>
+                        ))}
+                      </div>
+                      <p className="text-gray-700 text-center italic mb-2">"{fb.comment}"</p>
+                    </div>
+                  );
+                })}
               </div>
-            ))}
+            </div>
+            {/* Forward Arrow */}
+            <button
+              onClick={handleNext}
+              className="absolute right-4 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-indigo-100 transition"
+              disabled={current >= testimonials.length - visibleCards}
+              aria-label="Next"
+              style={{ top: "50%", transform: "translateY(-50%)" }}
+            >
+              <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
+                <path d="M9 5l7 7-7 7" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
           </div>
         </div>
       </section>
