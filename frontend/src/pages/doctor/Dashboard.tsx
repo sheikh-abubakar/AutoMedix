@@ -188,17 +188,12 @@ export default function DoctorDashboard() {
                 {todaysAppointments.length > 0 ? (
                   <div className="space-y-4">
                     {todaysAppointments.map((appointment) => (
-                      <PatientCard
+                      <div
                         key={appointment._id || appointment.id}
-                        appointment={{
-                          ...appointment,
-                          appointmentTime: appointment.time // Map 'time' to 'appointmentTime'
-                        }}
-                        onView={() => console.log("View patient")}
-                        onStartConsultation={() => console.log("Start consultation")}
-                        onApprove={() => console.log("Approve appointment")}
-                        onReject={() => console.log("Reject appointment")}
-                      />
+                        className="bg-gray-50 rounded-lg px-4 py-3 text-lg font-semibold text-gray-800"
+                      >
+                        {appointment.patient?.name || "Unknown Patient"}
+                      </div>
                     ))}
                   </div>
                 ) : (
