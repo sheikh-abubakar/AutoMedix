@@ -2,9 +2,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Calendar, FileText, Video, Shield, Star, CheckCircle } from "lucide-react";
 import { useLocation } from "wouter";
+import { useState, useEffect } from "react";
+import Slider from "react-slick";
+import axios from "axios";
 
 export default function Landing() {
   const [, setLocation] = useLocation();
+  const [testimonials, setTestimonials] = useState<any[]>([]);
+  useEffect(() => {
+  axios.get("http://localhost:5000/api/feedback/feedbacks").then(res => {
+      console.log("Testimonials API response:", res.data);
+      if (Array.isArray(res.data)) setTestimonials(res.data);
+      else setTestimonials([]);
+    }).catch(err => {
+      console.error("Testimonials API error:", err);
+    });
+  }, []);
 
   const handleLogin = () => {
     setLocation("/login");
@@ -15,7 +28,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative">
       {/* Navigation */}
       <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -195,7 +208,7 @@ export default function Landing() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 bg-primary">
+      <section className="py-20 bg-gray-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
             <div>
@@ -218,49 +231,32 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Testimonials Slider Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              What Our Patients Say
+              What Our Users Say
             </h2>
             <p className="text-xl text-gray-600">
-              Real experiences from our community
+              Real feedback from our patients and doctors
             </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[{
-              text: "AutoMedix made it so easy to connect with a doctor when I needed urgent care. The video consultation was smooth and professional.",
-              name: "Sarah Johnson",
-              role: "Patient"
-            }, {
-              text: "As a busy parent, being able to book appointments online and have quick consultations has been a game-changer for our family.",
-              name: "Michael Chen",
-              role: "Parent"
-            }, {
-              text: "The platform is intuitive and secure. I feel confident that my health information is protected while getting the care I need.",
-              name: "Emily Rodriguez",
-              role: "Healthcare Worker"
-            }].map((testimonial, i) => (
-              <Card key={i} className="p-6">
-                <CardContent className="pt-6">
-                  <div className="flex items-center mb-4">
-                    {[...Array(5)].map((_, starIndex) => (
-                      <Star key={starIndex} className="h-5 w-5 text-yellow-400 fill-current" />
+          <div className="flex gap-6 overflow-x-auto pb-4 hide-scrollbar">
+            {testimonials.map((fb, i) => (
+              <div key={i} className="min-w-[320px] max-w-xs flex-shrink-0">
+                <div className="bg-gray-100 rounded-xl shadow-lg p-6 flex flex-col items-center transition-all duration-300 min-h-[260px]">
+                  <img src={fb.profileImageUrl || '/default-avatar.png'} alt={fb.name || 'User'} className="h-14 w-14 rounded-full mb-3 object-cover border-2 border-indigo-200" />
+                  <div className="font-semibold text-base mb-1 text-gray-2000">{fb.name || "Anonymous"}</div>
+                  <div className="flex justify-center mb-2">
+                    {[1,2,3,4,5].map(star => (
+                      <span key={star} className={`text-yellow-400 text-lg ${star <= fb.rating ? '' : 'opacity-30'}`}>★</span>
                     ))}
                   </div>
-                  <p className="text-gray-600 mb-4">"{testimonial.text}"</p>
-                  <div className="flex items-center">
-                    <div className="bg-gray-200 rounded-full h-10 w-10 mr-3"></div>
-                    <div>
-                      <div className="font-semibold">{testimonial.name}</div>
-                      <div className="text-gray-500 text-sm">{testimonial.role}</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  <p className="text-gray-600 mb-2 text-center italic">{fb.comment ? `"${fb.comment}"` : "No comment."}</p>
+                  <div className="text-center text-xs text-indigo-500">{fb.role}</div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
