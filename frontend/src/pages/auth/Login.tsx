@@ -15,6 +15,10 @@ export default function Login() {
     const password = formData.get("password") as string;
     try {
       await login(email, password);
+     const userId = localStorage.getItem("_id");
+      if (userId) {
+        localStorage.setItem("userId", userId);
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");
     }

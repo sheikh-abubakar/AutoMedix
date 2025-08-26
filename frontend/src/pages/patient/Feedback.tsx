@@ -2,6 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import Sidebar from "@/components/Sidebar";
+import Navbar from "@/components/Navbar";
 
 export default function Feedback() {
   const { user } = useAuth();
@@ -22,6 +24,10 @@ export default function Feedback() {
   };
 
   return (
+    <div className="flex min-h-screen">
+    <Sidebar />
+    <div className="flex-1 bg-gray-50">
+      <Navbar />
     <div className="max-w-md mx-auto mt-12 p-8 bg-gradient-to-br from-primary-50 to-white rounded-2xl shadow-2xl border border-gray-100">
       <h2 className="text-3xl font-bold mb-6 text-center text-primary flex items-center justify-center gap-2">
         <span>Give Your Feedback</span>
@@ -56,5 +62,7 @@ export default function Feedback() {
       </Button>
       {submitted && <p className="text-green-600 text-center mt-6 text-base font-medium">Thank you for your feedback!</p>}
     </div>
+     </div>
+  </div>
   );
 }

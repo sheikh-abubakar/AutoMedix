@@ -1,6 +1,7 @@
 import express from "express";
 import Appointment from "../models/appointment.model.js";
 import Schedule from "../models/schedule.model.js";
+import axios from "axios";
 
 const router = express.Router();
 
@@ -28,8 +29,27 @@ router.post("/book", async (req, res) => {
     // Condition 2: Only one appointment per time slot
     const exists = await Appointment.findOne({ doctor: doctorId, date, time });
     if (exists) return res.status(400).json({ message: "This time slot is already booked." });
-
-    const appointment = await Appointment.create({ doctor: doctorId, patient: patientId, date, time });
+    
+    let videoRoomUrl = "";
+    if (req.body.type === "video" || req.body.type === "video-call") {
+      // Create Daily.co room
+      const dailyRes = await axios.post(
+        "https://api.daily.co/v1/rooms",
+        { name: `consult-${doctorId}-${Date.now()}` },
+        { headers: { Authorization: `Bearer ${process.env.DAILY_API_KEY}` } }
+      );
+      videoRoomUrl = dailyRes.data.url;
+    }
+    const appointment = await Appointment.create({
+      doctor: doctorId,
+      patient: patientId,
+      date,
+      time,
+      type: req.body.type,
+      symptoms: req.body.symptoms,
+      notes: req.body.notes,
+      videoRoomUrl 
+    });
     res.json(appointment);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
