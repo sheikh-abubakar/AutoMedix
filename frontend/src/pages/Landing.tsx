@@ -272,7 +272,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Testimonials Slider Section */}
+      {/* Testimonials Carousel Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -283,43 +283,52 @@ export default function Landing() {
               Real feedback from our patients and doctors
             </p>
           </div>
-          <div className="relative flex items-center" style={{ paddingTop: "70px" }}>
-            {/* Left Arrow */}
-            <button
-              onClick={handlePrev}
-              className="absolute left-4 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-indigo-100 transition"
-              aria-label="Previous"
-              style={{ top: "50%", transform: "translateY(-50%)" }}
+          <div className="relative w-full overflow-hidden group">
+            <style>
+              {`
+                @keyframes testimonial-scroll {
+                  0% { transform: translateX(0); }
+                  100% { transform: translateX(-50%); }
+                }
+                .testimonial-track {
+                  animation: testimonial-scroll 30s linear infinite;
+                }
+                .testimonial-track.paused {
+                  animation-play-state: paused;
+                }
+              `}
+            </style>
+            <div
+              className="flex w-full"
+              onMouseEnter={e => {
+                (e.currentTarget.querySelector('.testimonial-track') as HTMLDivElement)?.classList.add('paused');
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget.querySelector('.testimonial-track') as HTMLDivElement)?.classList.remove('paused');
+              }}
             >
-              <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
-                <path d="M15 19l-7-7 7-7" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-            {/* Cards */}
-            <div className="flex gap-8 overflow-hidden w-full justify-center" style={{ paddingTop: "30px" }}>
               <div
-                className="flex gap-8 transition-transform duration-700"
+                className="flex testimonial-track gap-8"
                 style={{
-                  transform: `translateX(-${current * (350 + 32)}px)`
+                  width: `${testimonials.length * 2 * 350 + testimonials.length * 2 * 32}px`,
                 }}
               >
-                {repeatedTestimonials.map((fb, i) => (
+                {[...testimonials, ...testimonials].map((fb, i) => (
                   <div
                     key={i}
                     className="relative bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center min-w-[350px] max-w-[350px] mx-auto border border-gray-100"
                     style={{
-                      borderBottom: `16px solid #6EE7B7`,
+                      borderBottom: `16px solid #25d7eb`,
                       background: "#f9fafb",
                       marginTop: "60px",
                     }}
                   >
-                    {/* Top Circle with Profile */}
                     <div
                       className="absolute left-1/2 -translate-x-1/2 -top-16 z-20 flex items-center justify-center overflow-hidden"
                       style={{
                         width: "100px",
                         height: "100px",
-                        background: "#D1FAE5",
+                        background: "#e3edfd",
                         borderRadius: "50%",
                         border: "4px solid #fff",
                         boxShadow: "0 4px 8px rgba(0,0,0,0.08)"
@@ -337,14 +346,15 @@ export default function Landing() {
                       />
                     </div>
                     <div className="mb-4 mt-16">
+                      {/* Symbol  */}
                       <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
-                        <path d="M7 17a4 4 0 0 1 4-4h1V7a4 4 0 1 0-8 0v6a4 4 0 0 0 4 4zm10 0a4 4 0 0 1 4-4h-1V7a4 4 0 1 0-8 0v6a4 4 0 0 0 4 4z" fill="#6EE7B7"/>
+                        <path d="M7 17a4 4 0 0 1 4-4h1V7a4 4 0 1 0-8 0v6a4 4 0 0 0 4 4zm10 0a4 4 0 0 1 4-4h-1V7a4 4 0 1 0-8 0v6a4 4 0 0 0 4 4z" fill="#25d7eb"/>
                       </svg>
                     </div>
                     <div className="font-bold text-xl text-gray-900 mb-1">{fb.name || "Anonymous"}</div>
-                    <div className="text-sm text-indigo-500 mb-2">{fb.role}</div>
+                    <div className="text-sm" style={{ color: "#25d7eb" }}>{fb.role}</div>
                     <div className="flex justify-center mb-3">
-                      {[...Array(fb.rating)].map((_, idx) => (
+                      {[...Array(fb.rating || 5)].map((_, idx) => (
                         <span key={idx} className="text-yellow-400 text-xl">★</span>
                       ))}
                     </div>
@@ -353,17 +363,6 @@ export default function Landing() {
                 ))}
               </div>
             </div>
-            {/* Right Arrow */}
-            <button
-              onClick={handleNext}
-              className="absolute right-4 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-indigo-100 transition"
-              aria-label="Next"
-              style={{ top: "50%", transform: "translateY(-50%)" }}
-            >
-              <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
-                <path d="M9 5l7 7-7 7" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
           </div>
         </div>
       </section>
