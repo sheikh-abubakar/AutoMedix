@@ -18,6 +18,7 @@ import reportRoutes from "./routes/reports.routes.js";
 import feedbackRouter from "./routes/feedback.routes.js"; // or correct path
 import prescriptionRoutes from "./routes/prescription.routes.js";
 import dailyRoutes from "./routes/daily.routes.js";
+import notificationRoutes from "./routes/notification.routes.js";
 
 connectDB();
 
@@ -46,6 +47,7 @@ app.use("/api/reports", reportRoutes);
 app.use("/api/feedback", feedbackRouter);
 app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/daily", dailyRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend API is running...");

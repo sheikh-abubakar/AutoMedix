@@ -2,10 +2,38 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Bell, Heart, ChevronDown } from "lucide-react";
 import { Link } from "wouter";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const { user } = useAuth();
   const { logout } = useAuth();
+
+  const [notificationCount, setNotificationCount] = useState(0);
+
+  useEffect(() => {
+    async function fetchCount() {
+      const doctorId = user?._id || localStorage.getItem("userId");
+      if (user?.role === "doctor" && doctorId) {
+        try {
+          const token = localStorage.getItem("token");
+          const res = await fetch(`/api/notifications/doctor/${doctorId}/count`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          const data = await res.json();
+          setNotificationCount(data.count);
+        } catch {
+          setNotificationCount(0);
+        }
+      }
+    }
+    fetchCount();
+    window.addEventListener("notificationCleared", fetchCount);
+    window.addEventListener("notificationChanged", fetchCount);
+    return () => {
+      window.removeEventListener("notificationCleared", fetchCount);
+      window.removeEventListener("notificationChanged", fetchCount);
+    };
+  }, [user]);
 
   // Determine profile route based on role
   const profileRoute =
@@ -26,12 +54,16 @@ export default function Navbar() {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="relative" data-testid="button-notifications">
-              <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                3
-              </span>
-            </Button>
+            <Link to="/doctor/notifications">
+              <Button variant="ghost" size="sm" className="relative" data-testid="button-notifications">
+                <Bell className="h-5 w-5" />
+                {notificationCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                    {notificationCount}
+                  </span>
+                )}
+              </Button>
+            </Link>
             <Link to={profileRoute}>
               <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 rounded-lg p-2">
                 {user?.profileImageUrl ? (

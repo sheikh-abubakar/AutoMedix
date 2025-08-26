@@ -2,6 +2,7 @@ import Report from "../models/report.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
+import Notification from "../models/notification.model.js";
 
 // Cloudinary config
 cloudinary.config({
@@ -25,6 +26,12 @@ export const uploadReport = async (req, res) => {
     const { patientId, doctorId } = req.body;
     const fileUrl = req.file.path; // Cloudinary URL
     const report = await Report.create({ patientId, doctorId, fileUrl });
+    await Notification.create({
+    user: doctorId, // make sure doctorId is available here
+    type: "report",
+    message: `Patient shared a medical report.`,
+    link: `/doctor/medical-records`
+  });
     res.json(report);
   } catch (err) {
     res.status(500).json({ message: "Error uploading report" });

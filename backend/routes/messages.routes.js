@@ -1,6 +1,7 @@
 import express from "express";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
+import Notification from "../models/notification.model.js";
 
 const router = express.Router();
 
@@ -62,6 +63,12 @@ router.post("/", async (req, res) => {
   try {
     const { senderId, receiverId, content } = req.body;
     const message = await Message.create({ senderId, receiverId, content });
+    await Notification.create({
+      user: receiverId, // doctor
+      type: "message",
+      message: `New message from patient.`,
+      link: `/doctor/messages`
+    });
     res.json(message);
   } catch (err) {
     res.status(500).json({ message: "Server error" });

@@ -2,6 +2,7 @@ import express from "express";
 import Appointment from "../models/appointment.model.js";
 import Schedule from "../models/schedule.model.js";
 import axios from "axios";
+import Notification from "../models/notification.model.js";
 
 const router = express.Router();
 
@@ -50,6 +51,13 @@ router.post("/book", async (req, res) => {
       notes: req.body.notes,
       videoRoomUrl 
     });
+
+      await Notification.create({
+        user: doctorId,
+        type: "appointment",
+        message: `New appointment booked by patient.`,
+        link: `/doctor/appointments`
+      });
     res.json(appointment);
   } catch (error) {
     res.status(500).json({ message: "Server error" });

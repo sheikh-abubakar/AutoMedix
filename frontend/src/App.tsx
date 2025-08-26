@@ -32,6 +32,7 @@ import Prescriptions from "@/pages/patient/Prescriptions";
 import CreatePrescription from "@/pages/doctor/CreatePrescription";
 import DoctorVideoConsultation from "@/pages/doctor/VideoConsultation";
 import PatientVideoConsultation from "@/pages/patient/VideoConsultation";
+import DoctorNotifications from "@/pages/doctor/Notifications";
 
 function Router() {
   const { isLoading } = useAuth();
@@ -76,6 +77,7 @@ function Router() {
       <Route path="/doctor/create-prescription" component={CreatePrescription} />
       <Route path="/doctor/video-consultation" component={DoctorVideoConsultation} />
       <Route path="/patient/video-consultation" component={PatientVideoConsultation} />
+      <Route path="/doctor/notifications" component={DoctorNotifications} />
       <Route component={NotFound} />
     </Switch>
   );

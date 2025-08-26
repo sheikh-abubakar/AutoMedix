@@ -4,6 +4,7 @@ import express from "express";
 import Stripe from "stripe";
 import Appointment from "../models/appointment.model.js";
 import User from "../models/user.model.js";
+import Notification from "../models/notification.model.js";
 
 const router = express.Router();
 
@@ -42,7 +43,12 @@ router.post("/create-checkout-session", async (req, res) => {
         doctorId: appointment.doctor._id.toString(),
       },
     });
-
+    await Notification.create({
+      user: appointment.doctor._id,
+      type: "payment",
+      message: `Patient has paid for appointment.`,
+      link: `/doctor/appointments`
+    });
     res.json({ url: session.url });
   } catch (err) {
     console.error("Stripe error:", err);
