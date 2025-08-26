@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const PrescriptionSchema = new mongoose.Schema({
-  prescriptionId: { type: String, required: true, unique: true },
+  prescriptionId: { type: String, unique: true }, // <-- required: false
   date: { type: String, required: true },
   doctor: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   patient: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
