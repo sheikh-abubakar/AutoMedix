@@ -1,5 +1,3 @@
-
-
 import { useAuth } from "@/hooks/useAuth";
 import React, { useState } from "react";
 
@@ -70,7 +68,7 @@ export default function Login({ onSignupClick }: { onSignupClick?: () => void })
             <h2 className="text-3xl font-bold text-white mb-2 text-center">
               Login
             </h2>
-            <div className="text-center text-gray-300 mb-4">Welcome Back!</div>
+            <div className="text-center text-gray-700 mb-4">Welcome Back!</div>
             {error && (
               <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-2 text-sm text-center border border-red-200">
                 {error}
@@ -129,7 +127,7 @@ export default function Login({ onSignupClick }: { onSignupClick?: () => void })
           <h2 className="text-3xl font-bold text-white mb-2">
             WELCOME BACK!
           </h2>
-          <p className="text-gray-200">
+          <p className="text-gray-200 font-bold">
             We are happy to have you with us again. If you need anything, we are
             here to help.
           </p>
@@ -140,11 +138,11 @@ export default function Login({ onSignupClick }: { onSignupClick?: () => void })
          .container-login {
             position: relative;
             width: 800px;
-            height: 810px;
+            height: 800px;
             border: 2px solid #25d7eb;
             box-shadow: 0 0 25px #25d7eb;
             overflow: hidden;
-            background: linear-gradient(120deg, #111 60%, #25d7eb 100%);
+            background: linear-gradient(120deg, #fff 60%, #25d7eb 50%);
             display: flex;
           }
           .form-box {
@@ -157,8 +155,11 @@ export default function Login({ onSignupClick }: { onSignupClick?: () => void })
             flex-direction: column;
             justify-content: center;
             padding: 40px;
-            background: rgba(10,10,10,0.98);
+            background: #fff;
             z-index: 2;
+          }
+          .form-box h2 {
+            color: #25d7eb !important;
           }
           .welcome-box {
             position: absolute;
@@ -171,7 +172,7 @@ export default function Login({ onSignupClick }: { onSignupClick?: () => void })
             justify-content: center;
             align-items: center;
             padding: 40px;
-            background: linear-gradient(120deg, #25d7eb 60%, #111 100%);
+            background: linear-gradient(120deg, #25d7eb 60%, #fff 100%);
             color: #25d7eb;
             z-index: 1;
           }
@@ -188,7 +189,7 @@ export default function Login({ onSignupClick }: { onSignupClick?: () => void })
             border: none;
             outline: none;
             font-size: 16px;
-            color: #25d7eb;
+            color: #555; /* grey text for fields */
             font-weight: 600;
             border-bottom: 2px solid #25d7eb;
             padding-right: 23px;

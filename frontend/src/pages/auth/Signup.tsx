@@ -100,16 +100,16 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
               </div>
             )}
             <div className="input-box">
-              <input type="text" name="name" placeholder="Username" required />
+              <input type="text" name="name" placeholder="Username" required autoComplete="off" />
             </div>
             <div className="input-box">
-              <input type="email" name="email" placeholder="Email" required />
+              <input type="email" name="email" placeholder="Email" required autoComplete="email" />
             </div>
             <div className="input-box">
-              <input type="password" name="password" placeholder="Password" required />
+              <input type="password" name="password" placeholder="Password" required autoComplete="new-password" />
             </div>
             <div className="input-box">
-              <label className="text-blue-400 mb-1 block" htmlFor="profileImage">
+              <label className="text-gray-700 mb-1 block" htmlFor="profileImage">
                 Profile Image
               </label>
               <input
@@ -159,7 +159,7 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
                   />
                 </div>
                 <div className="input-box">
-                  <label className="text-mb-1 block" htmlFor="resume">
+                  <label className="text-gray-700 mb-1 block" htmlFor="resume">
                     Resume
                   </label>
                   <input
@@ -179,11 +179,11 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
               disabled={isUploading}
               className={`w-full py-3 rounded-lg font-semibold transition ${
                 isUploading
-                  ? "bg-gradient-to-r from-cyan-400 to-cyan-600 text-white cursor-not-allowed"
-                  : "bg-gradient-to-r from-cyan-400 to-cyan-600 text-white hover:from-cyan-500 hover:to-cyan-700 shadow-md"
+                  ? "bg-gradient-to-r from-[#2a2082] to-[#1a237e] text-white cursor-not-allowed"
+                  : "bg-gradient-to-r from-[#2a2082] to-[#1a237e] text-white hover:from-[#1a237e] hover:to-[#2a2082] shadow-md"
               }`}
               style={{
-                boxShadow: "0 0 15px #25d7eb",
+                boxShadow: "0 0 15px #2a2082",
                 border: "none",
                 fontWeight: 600,
                 fontSize: "18px",
@@ -210,7 +210,7 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
         </div>
         <div className="welcome-box">
           <h2 className="text-3xl font-bold text-white mb-2">WELCOME!</h2>
-          <p className="text-white">
+          <p className="text-white font-bold">
             We're delighted to have you here. If you need any assistance, feel free to reach out.
           </p>
           {showPopup && (
@@ -239,9 +239,9 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
             width: 800px;
             height: 810px;
             border: 2px solid #25d7eb;
-            box-shadow: 0 0 25px #25d7eb;
+            box-shadow: 0 0 25px #25d7eb; /* blue shadow */
             overflow: hidden;
-            background: linear-gradient(120deg, #111 60%, #25d7eb 100%);
+            background: linear-gradient(120deg, #fff 60%, #25d7eb 100%); /* white to blue */
             display: flex;
           }
           .form-box {
@@ -254,8 +254,9 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
             flex-direction: column;
             justify-content: center;
             padding: 50px;
-            background: rgba(10,10,10,0.98);
+            background: #fff; /* white background */
             z-index: 2;
+            color: #555; /* grey text */
           }
           .welcome-box {
             position: absolute;
@@ -268,15 +269,9 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
             justify-content: center;
             align-items: center;
             padding: 50px;
-            background: linear-gradient(120deg, #25d7eb 60%, #111 100%);
-            color: #25d7eb;
+            background: linear-gradient(120deg, #25d7eb 50%, #fff 100%); 
+            color: #555; /* grey text */
             z-index: 1;
-          }
-          .input-box {
-            position: relative;
-            width: 100%;
-            height: 50px;
-            margin-top: 25px;
           }
           .input-box input,
           .input-box select {
@@ -286,16 +281,16 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
             border: none;
             outline: none;
             font-size: 16px;
-            color: #25d7eb;
+            color: #555; /* grey text */
             font-weight: 600;
-            border-bottom: 2px solid #25d7eb;
+            border-bottom: 2px solid #27ae60; /* green border */
             padding-right: 23px;
             padding-left: 10px;
             transition: .5s;
           }
           .input-box input[type="file"] {
             padding-left: 0;
-            color: #25d7eb;
+            color: #27ae60; /* green for file input */
             border-bottom: none;
             font-weight: 400;
             font-size: 14px;
@@ -303,7 +298,11 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
           }
           .input-box input:focus,
           .input-box select:focus {
-            border-bottom: 2px solid #25d7eb;
+            border-bottom: 2px solid #27ae60;
+          }
+          .input-box button,
+          button[type="submit"] {
+            border-bottom: none !important;
           }
           .animate-slide-in {
             animation: slide-in 0.7s cubic-bezier(.68,-0.55,.27,1.55);
