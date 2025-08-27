@@ -289,9 +289,10 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
             transition: .5s;
           }
           .input-box input[type="file"] {
+            border-bottom: none !important;
+            box-shadow: none !important;
             padding-left: 0;
             color: #27ae60; /* green for file input */
-            border-bottom: none;
             font-weight: 400;
             font-size: 14px;
             margin-top: 8px;
