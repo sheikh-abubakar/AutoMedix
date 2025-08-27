@@ -33,6 +33,8 @@ import CreatePrescription from "@/pages/doctor/CreatePrescription";
 import DoctorVideoConsultation from "@/pages/doctor/VideoConsultation";
 import PatientVideoConsultation from "@/pages/patient/VideoConsultation";
 import DoctorNotifications from "@/pages/doctor/Notifications";
+import AdminNotifications from "@/pages/admin/Notifications";
+
 import AuthPage from "@/pages/auth/AuthPage";
 
 function Router() {
@@ -79,6 +81,7 @@ function Router() {
       <Route path="/doctor/video-consultation" component={DoctorVideoConsultation} />
       <Route path="/patient/video-consultation" component={PatientVideoConsultation} />
       <Route path="/doctor/notifications" component={DoctorNotifications} />
+      <Route path="/admin/notifications" component={AdminNotifications} />
       <Route component={NotFound} />
     </Switch>
   );

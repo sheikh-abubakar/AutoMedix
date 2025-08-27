@@ -12,11 +12,17 @@ export default function Navbar() {
 
   useEffect(() => {
     async function fetchCount() {
-      const doctorId = user?._id || localStorage.getItem("userId");
-      if (user?.role === "doctor" && doctorId) {
+      const userId = user?._id || localStorage.getItem("userId");
+      let url = "";
+      if (user?.role === "doctor") {
+        url = `/api/notifications/doctor/${userId}/count`;
+      } else if (user?.role === "admin") {
+        url = `/api/notifications/admin/${userId}/count`;
+      }
+      if (url) {
         try {
           const token = localStorage.getItem("token");
-          const res = await fetch(`/api/notifications/doctor/${doctorId}/count`, {
+          const res = await fetch(url, {
             headers: { Authorization: `Bearer ${token}` }
           });
           const data = await res.json();
@@ -43,6 +49,14 @@ export default function Navbar() {
       ? "/patient/profile"
       : "/admin/profile";
 
+  // Determine notification page route based on role
+  const notificationRoute =
+    user?.role === "doctor"
+      ? "/doctor/notifications"
+      : user?.role === "admin"
+      ? "/admin/notifications"
+      : "/patient/notifications";
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,7 +68,7 @@ export default function Navbar() {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <Link to="/doctor/notifications">
+            <Link to={notificationRoute}>
               <Button variant="ghost" size="sm" className="relative" data-testid="button-notifications">
                 <Bell className="h-5 w-5" />
                 {notificationCount > 0 && (

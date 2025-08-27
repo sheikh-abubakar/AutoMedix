@@ -13,21 +13,20 @@ type Notification = {
   createdAt: string;
 };
 
-export default function DoctorNotifications() {
+export default function AdminNotifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
-  const doctorId = localStorage.getItem("userId") || localStorage.getItem("_id");
+  const adminId = localStorage.getItem("userId") || localStorage.getItem("_id");
 
   useEffect(() => {
     async function fetchNotifications() {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(`/notifications/doctor/${doctorId}?isRead=false`, {
+        const res = await axios.get(`/notifications/admin/${adminId}?isRead=false`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setNotifications(res.data);
-        // Dispatch event to update bell icon count
         window.dispatchEvent(new Event("notificationChanged"));
       } catch (err) {
         alert("Failed to fetch notifications");
@@ -35,16 +34,15 @@ export default function DoctorNotifications() {
       setLoading(false);
     }
     fetchNotifications();
-  }, [doctorId]);
+  }, [adminId]);
 
   async function clearNotifications() {
     try {
       const token = localStorage.getItem("token");
-      await axios.post(`/notifications/doctor/${doctorId}/clear`, {}, {
+      await axios.post(`/notifications/admin/${adminId}/clear`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setNotifications([]);
-      // Dispatch event to update bell icon count
       window.dispatchEvent(new Event("notificationCleared"));
     } catch (err) {
       alert("Failed to clear notifications");
@@ -57,7 +55,7 @@ export default function DoctorNotifications() {
       <div className="flex-1 bg-gray-50">
         <Navbar />
         <div className="max-w-2xl mx-auto mt-10">
-          <h2 className="text-2xl font-bold mb-6 text-center text-indigo-700">Notifications</h2>
+          <h2 className="text-2xl font-bold mb-6 text-center text-indigo-700">Admin Notifications</h2>
           <div className="flex justify-end mb-4">
             <button
               className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"

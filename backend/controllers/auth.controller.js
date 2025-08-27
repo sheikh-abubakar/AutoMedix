@@ -2,6 +2,8 @@ import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import DoctorProfile from "../models/doctorProfile.model.js";
+import Notification from "../models/notification.model.js";
+
 
 dotenv.config();
 
@@ -28,6 +30,18 @@ export const registerUser = async (req, res) => {
 
     // Create user
     const user = await User.create({ name, email, password, role, profileImageUrl, experience, specialization });
+
+    //notification
+
+    const admin = await User.findOne({ role: "admin" });
+    if (admin) {
+      await Notification.create({
+        user: admin._id,
+        type: "registration",
+        message: `New ${user.role} registered: ${user.name}`,
+        link: "/admin/users"
+      });
+}
 
     // Auto-create doctor profile if role is doctor
     if (role === "doctor") {

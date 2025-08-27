@@ -3,6 +3,7 @@ import Appointment from "../models/appointment.model.js";
 import Schedule from "../models/schedule.model.js";
 import axios from "axios";
 import Notification from "../models/notification.model.js";
+import User from "../models/user.model.js"; // <-- Add this import
 
 const router = express.Router();
 
@@ -41,6 +42,7 @@ router.post("/book", async (req, res) => {
       );
       videoRoomUrl = dailyRes.data.url;
     }
+    
     const appointment = await Appointment.create({
       doctor: doctorId,
       patient: patientId,
@@ -52,12 +54,37 @@ router.post("/book", async (req, res) => {
       videoRoomUrl 
     });
 
+    // Notify doctor
+    await Notification.create({
+      user: doctorId,
+      type: "appointment",
+      message: `New appointment booked by patient.`,
+      link: `/doctor/appointments`
+    });
+
+    // Notify admin
+    const admin = await User.findOne({ role: "admin" });
+    if (admin) {
+      // Get patient and doctor names for message
+      let patientName = "";
+      let doctorName = "";
+      try {
+        const patientUser = await User.findById(patientId);
+        patientName = patientUser ? patientUser.name : patientId;
+        const doctorUser = await User.findById(doctorId);
+        doctorName = doctorUser ? doctorUser.name : doctorId;
+      } catch {
+        patientName = patientId;
+        doctorName = doctorId;
+      }
       await Notification.create({
-        user: doctorId,
+        user: admin._id,
         type: "appointment",
-        message: `New appointment booked by patient.`,
-        link: `/doctor/appointments`
+        message: `Patient ${patientName} booked an appointment with Dr. ${doctorName}`,
+        link: "/admin/appointments"
       });
+    }
+
     res.json(appointment);
   } catch (error) {
     res.status(500).json({ message: "Server error" });

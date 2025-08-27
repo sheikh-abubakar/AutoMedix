@@ -2,6 +2,7 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
+import Notification from "../models/notification.model.js";
 
 const router = express.Router();
 
@@ -33,6 +34,15 @@ router.post("/register", async (req, res) => {
 
     const newUser = new User(userData);
     await newUser.save();
+    const admin = await User.findOne({ role: "admin" });
+  if (admin) {
+    await Notification.create({
+      user: admin._id,
+      type: "registration",
+      message: `New ${newUser.role} registered: ${newUser.name}`,
+      link: "/admin/users"
+    });
+  }
 
     const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
