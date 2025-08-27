@@ -5,7 +5,7 @@ import RoleSelector from "./RoleSelector";
 const CLOUDINARY_UPLOAD_PRESET = "firstPreset";
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dkmgbgxb8/raw/upload";
 
-const Signup = () => {
+export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) {
   const { signup, authError } = useAuth();
   const [role, setRole] = useState("");
   const [profileImage, setProfileImage] = useState<File | null>(null);
@@ -14,7 +14,6 @@ const Signup = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
 
-  // Resume upload function
   const uploadToCloudinary = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -76,7 +75,6 @@ const Signup = () => {
         profileImageUrl,
         extraFields
       );
-      // Show popup after successful signup for doctor
       if (role.toLowerCase() === "doctor") {
         setShowPopup(true);
         setTimeout(() => setShowPopup(false), 4000);
@@ -88,168 +86,234 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-blue-100 to-white">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md space-y-6 border border-gray-200"
-      >
-        <h2 className="text-3xl font-bold text-center text-indigo-700 mb-2">Create Account</h2>
-        <p className="text-center text-gray-500 mb-4">Sign up to get started</p>
-        {error && (
-          <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-2 text-sm text-center border border-red-200">
-            {error}
-          </div>
-        )}
-        <div className="flex flex-col gap-2">
-          <label className="font-medium text-gray-700">Name</label>
-          <input
-            type="text"
-            name="name"
-            required
-            className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            placeholder="Enter your name"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className="font-medium text-gray-700">Email</label>
-          <input
-            type="email"
-            name="email"
-            required
-            className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            placeholder="Enter your email"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className="font-medium text-gray-700">Password</label>
-          <input
-            type="password"
-            name="password"
-            required
-            className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            placeholder="Enter password"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className="font-medium text-gray-700">Profile Image</label>
-          <input
-            type="file"
-            accept="image/*"
-            name="profileImage"
-            required
-            onChange={e => setProfileImage(e.target.files?.[0] || null)}
-            className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className="font-medium text-gray-700">Select Role</label>
-          <RoleSelector value={role} onRoleChange={setRole} />
-        </div>
-        {role === "patient" && (
-          <>
-            <div className="flex flex-col gap-2">
-              <label className="font-medium text-gray-700">Age</label>
-              <input
-                type="number"
-                name="age"
-                required
-                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                placeholder="Enter your age"
-              />
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="container-signup animate-slide-in">
+        <div className="form-box">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <h2 className="text-3xl font-bold text-[#25d7eb] mb-2 text-center">
+              Register
+            </h2>
+            <div className="text-center text-gray-400 mb-4">Create your account</div>
+            {error && (
+              <div className="bg-blue-100 text-blue-700 px-4 py-2 rounded mb-2 text-sm text-center border border-blue-200">
+                {error}
+              </div>
+            )}
+            <div className="input-box">
+              <input type="text" name="name" placeholder="Username" required />
             </div>
-            <div className="flex flex-col gap-2">
-              <label className="font-medium text-gray-700">Gender</label>
-              <select
-                name="gender"
-                required
-                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              >
-                <option value="">Select gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
+            <div className="input-box">
+              <input type="email" name="email" placeholder="Email" required />
             </div>
-          </>
-        )}
-        {role === "doctor" && (
-          <>
-            <div className="flex flex-col gap-2">
-              <label className="font-medium text-gray-700">Experience (years)</label>
-              <input
-                type="number"
-                name="experience"
-                required
-                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                placeholder="Years of experience"
-              />
+            <div className="input-box">
+              <input type="password" name="password" placeholder="Password" required />
             </div>
-            <div className="flex flex-col gap-2">
-              <label className="font-medium text-gray-700">Specialization</label>
-              <input
-                type="text"
-                name="specialization"
-                required
-                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                placeholder="Your specialization"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="font-medium text-gray-700">Resume (PDF/DOC)</label>
+            <div className="input-box">
+              <label className="text-blue-400 mb-1 block" htmlFor="profileImage">
+                Profile Image
+              </label>
               <input
                 type="file"
-                accept=".pdf,.doc,.docx"
-                name="resume"
+                accept="image/*"
+                name="profileImage"
+                id="profileImage"
                 required
-                onChange={e => setResumeFile(e.target.files?.[0] || null)}
-                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none"
+                onChange={(e) => setProfileImage(e.target.files?.[0] || null)}
+                style={{ color: "#25d7eb" }}
               />
             </div>
-          </>
-        )}
-        <button
-          type="submit"
-          disabled={isUploading}
-          className={`w-full py-3 rounded-lg font-semibold transition ${
-            isUploading
-              ? "bg-indigo-300 text-white cursor-not-allowed"
-              : "bg-indigo-600 text-white hover:bg-indigo-700"
-          }`}
-        >
-          {isUploading ? "Uploading..." : "Signup"}
-        </button>
-        {showPopup && (
-          <div className="fixed top-8 right-8 z-50 flex items-center gap-3 bg-blue-600 text-white px-6 py-4 rounded-xl shadow-lg animate-slide-in">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2l4-4" />
-              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
-            </svg>
-            <span className="font-medium">
-              Your signup request has been sent to admin for approval.
-            </span>
-          </div>
-        )}
-        {authError && (
-          <div className="bg-red-100 text-red-700 px-4 py-2 rounded mt-2 text-sm text-center border border-red-200">
-            {authError}
-          </div>
-        )}
-      </form>
+            <div className="input-box">
+              <RoleSelector value={role} onRoleChange={setRole} />
+            </div>
+            {role === "patient" && (
+              <>
+                <div className="input-box">
+                  <input type="number" name="age" placeholder="Age" required />
+                </div>
+                <div className="input-box">
+                  <select name="gender" required className="input-select">
+                    <option value="">Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </>
+            )}
+            {role === "doctor" && (
+              <>
+                <div className="input-box">
+                  <input
+                    type="number"
+                    name="experience"
+                    placeholder="Experience (years)"
+                    required
+                  />
+                </div>
+                <div className="input-box">
+                  <input
+                    type="text"
+                    name="specialization"
+                    placeholder="Specialization"
+                    required
+                  />
+                </div>
+                <div className="input-box">
+                  <label className="text-mb-1 block" htmlFor="resume">
+                    Resume
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    name="resume"
+                    id="resume"
+                    required
+                    onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
+                    style={{ color: "#25d7eb" }}
+                  />
+                </div>
+              </>
+            )}
+            <button
+              type="submit"
+              disabled={isUploading}
+              className={`w-full py-3 rounded-lg font-semibold transition ${
+                isUploading
+                  ? "bg-gradient-to-r from-cyan-400 to-cyan-600 text-white cursor-not-allowed"
+                  : "bg-gradient-to-r from-cyan-400 to-cyan-600 text-white hover:from-cyan-500 hover:to-cyan-700 shadow-md"
+              }`}
+              style={{
+                boxShadow: "0 0 15px #25d7eb",
+                border: "none",
+                fontWeight: 600,
+                fontSize: "18px",
+              }}
+            >
+              {isUploading ? "Uploading..." : "Register"}
+            </button>
+            <div className="text-center mt-4">
+              <span className="text-gray-400">Already have an account? </span>
+              <button
+                type="button"
+                className="text-[#25d7eb] font-semibold hover:underline transition bg-transparent border-none cursor-pointer"
+                onClick={onLoginClick}
+              >
+                Login
+              </button>
+            </div>
+            {authError && (
+              <div className="bg-blue-100 text-blue-700 px-4 py-2 rounded mt-2 text-sm text-center border border-blue-200">
+                {authError}
+              </div>
+            )}
+          </form>
+        </div>
+        <div className="welcome-box">
+          <h2 className="text-3xl font-bold text-white mb-2">WELCOME!</h2>
+          <p className="text-white">
+            We're delighted to have you here. If you need any assistance, feel free to reach out.
+          </p>
+          {showPopup && (
+            <div className="mt-6 flex items-center gap-3 bg-cyan-600 text-white px-6 py-4 rounded-xl shadow-lg animate-slide-in">
+              <svg
+                className="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2l4-4" />
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
+              </svg>
+              <span className="font-medium">
+                Your signup request has been sent to admin for approval.
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
       <style>
         {`
+          .container-signup {
+            position: relative;
+            width: 800px;
+            height: 810px;
+            border: 2px solid #25d7eb;
+            box-shadow: 0 0 25px #25d7eb;
+            overflow: hidden;
+            background: linear-gradient(120deg, #111 60%, #25d7eb 100%);
+            display: flex;
+          }
+          .form-box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 50px;
+            background: rgba(10,10,10,0.98);
+            z-index: 2;
+          }
+          .welcome-box {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+            background: linear-gradient(120deg, #25d7eb 60%, #111 100%);
+            color: #25d7eb;
+            z-index: 1;
+          }
+          .input-box {
+            position: relative;
+            width: 100%;
+            height: 50px;
+            margin-top: 25px;
+          }
+          .input-box input,
+          .input-box select {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            color: #25d7eb;
+            font-weight: 600;
+            border-bottom: 2px solid #25d7eb;
+            padding-right: 23px;
+            padding-left: 10px;
+            transition: .5s;
+          }
+          .input-box input[type="file"] {
+            padding-left: 0;
+            color: #25d7eb;
+            border-bottom: none;
+            font-weight: 400;
+            font-size: 14px;
+            margin-top: 8px;
+          }
+          .input-box input:focus,
+          .input-box select:focus {
+            border-bottom: 2px solid #25d7eb;
+          }
           .animate-slide-in {
-            animation: slide-in 0.5s ease;
+            animation: slide-in 0.7s cubic-bezier(.68,-0.55,.27,1.55);
           }
           @keyframes slide-in {
-            from { opacity: 0; transform: translateY(-20px);}
+            from { opacity: 0; transform: translateY(-40px);}
             to { opacity: 1; transform: translateY(0);}
           }
         `}
       </style>
     </div>
   );
-};
-
-export default Signup;
-
-
+}

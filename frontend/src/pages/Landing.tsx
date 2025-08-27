@@ -82,9 +82,6 @@ export default function Landing() {
               <Button onClick={handleLogin} data-testid="button-login">
                 Sign In
               </Button>
-              <Button variant="outline" onClick={handleSignup} data-testid="button-signup">
-                Register
-              </Button>
             </div>
           </div>
         </div>
