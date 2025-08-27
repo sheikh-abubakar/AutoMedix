@@ -69,11 +69,6 @@ export default function Login({ onSignupClick }: { onSignupClick?: () => void })
               Login
             </h2>
             <div className="text-center text-gray-700 mb-4">Welcome Back!</div>
-            {error && (
-              <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-2 text-sm text-center border border-red-200">
-                {error}
-              </div>
-            )}
             <div className="input-box">
               <input
                 type="email"
@@ -99,11 +94,11 @@ export default function Login({ onSignupClick }: { onSignupClick?: () => void })
               disabled={isLoading}
               className={`w-full py-3 rounded-lg font-semibold transition ${
                 isLoading
-                  ? "bg-gradient-to-r from-[#25d7eb] to-[#1a9fc2] text-white cursor-not-allowed"
-                  : "bg-gradient-to-r from-[#25d7eb] to-[#1a9fc2] text-white hover:from-[#1a9fc2] hover:to-[#25d7eb] shadow-md"
+                  ? "bg-gradient-to-r from-[#2a2082] to-[#1a237e] text-white cursor-not-allowed"
+                  : "bg-gradient-to-r from-[#2a2082] to-[#1a237e] text-white hover:from-[#1a237e] hover:to-[#2a2082] shadow-md"
               }`}
               style={{
-                boxShadow: "0 0 15px #25d7eb",
+                boxShadow: "0 0 15px #2a2082",
                 border: "none",
                 fontWeight: 600,
                 fontSize: "18px",
@@ -124,13 +119,29 @@ export default function Login({ onSignupClick }: { onSignupClick?: () => void })
           </form>
         </div>
         <div className="welcome-box">
-          <h2 className="text-3xl font-bold text-white mb-2">
+          <h2 className="text-4xl font-bold text-white mb-2">
             WELCOME BACK!
           </h2>
           <p className="text-gray-200 font-bold">
             We are happy to have you with us again. If you need anything, we are
             here to help.
           </p>
+          {error && (
+            <div className="mt-6 flex items-center gap-3 bg-cyan-600 text-white px-6 py-4 rounded-xl shadow-lg animate-slide-in">
+              <svg
+                className="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span className="font-medium">
+                {error}
+              </span>
+            </div>
+          )}
         </div>
       </div>
       <style>

@@ -201,19 +201,15 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
                 Login
               </button>
             </div>
-            {authError && (
-              <div className="bg-blue-100 text-blue-700 px-4 py-2 rounded mt-2 text-sm text-center border border-blue-200">
-                {authError}
-              </div>
-            )}
           </form>
         </div>
         <div className="welcome-box">
-          <h2 className="text-3xl font-bold text-white mb-2">WELCOME!</h2>
+          <h2 className="text-4xl font-bold text-white mb-2">WELCOME!</h2>
           <p className="text-white font-bold">
             We're delighted to have you here. If you need any assistance, feel free to reach out.
           </p>
-          {showPopup && (
+          {/* Popup message for signup status */}
+          {(showPopup || authError) && (
             <div className="mt-6 flex items-center gap-3 bg-cyan-600 text-white px-6 py-4 rounded-xl shadow-lg animate-slide-in">
               <svg
                 className="w-6 h-6 text-white"
@@ -226,7 +222,7 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
                 <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
               </svg>
               <span className="font-medium">
-                Your signup request has been sent to admin for approval.
+                {authError ? authError : "Your signup request has been sent to admin for approval."}
               </span>
             </div>
           )}

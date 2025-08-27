@@ -91,6 +91,7 @@ export function useAuth() {
         setAuthError(err.response.data.message);
       } else {
         setAuthError(err.response?.data?.message || "Login failed");
+        throw err;
       }
     }
   };
