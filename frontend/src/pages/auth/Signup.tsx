@@ -234,10 +234,10 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
             position: relative;
             width: 800px;
             height: 810px;
-            border: 2px solid #25d7eb;
-            box-shadow: 0 0 25px #25d7eb; /* blue shadow */
+            border: 2px solid #3299a8;
+            box-shadow: 0 0 25px #3299a8; /* blue shadow */
             overflow: hidden;
-            background: linear-gradient(120deg, #fff 60%, #25d7eb 100%); /* white to blue */
+            background: linear-gradient(120deg, #fff 60%, #3299a8 100%); /* white to blue */
             display: flex;
           }
           .form-box {
@@ -265,7 +265,7 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
             justify-content: center;
             align-items: center;
             padding: 50px;
-            background: linear-gradient(120deg, #25d7eb 50%, #fff 100%); 
+            background: linear-gradient(120deg, #3299a8 50%, #fff 100%);
             color: #555; /* grey text */
             z-index: 1;
           }
@@ -279,7 +279,7 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
             font-size: 16px;
             color: #555; /* grey text */
             font-weight: 600;
-            border-bottom: 2px solid #27ae60; /* green border */
+            border-bottom: 2px solid #3299a8; /* green border */
             padding-right: 23px;
             padding-left: 10px;
             transition: .5s;
@@ -288,14 +288,14 @@ export default function Signup({ onLoginClick }: { onLoginClick?: () => void }) 
             border-bottom: none !important;
             box-shadow: none !important;
             padding-left: 0;
-            color: #27ae60; /* green for file input */
+            color: #3299a8; /* green for file input */
             font-weight: 400;
             font-size: 14px;
             margin-top: 8px;
           }
           .input-box input:focus,
           .input-box select:focus {
-            border-bottom: 2px solid #27ae60;
+            border-bottom: 2px solid #3299a8;
           }
           .input-box button,
           button[type="submit"] {

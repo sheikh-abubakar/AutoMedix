@@ -315,7 +315,7 @@ export default function Landing() {
                     key={i}
                     className="relative bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center min-w-[350px] max-w-[350px] mx-auto border border-gray-100"
                     style={{
-                      borderBottom: `16px solid #25d7eb`,
+                      borderBottom: `16px solid #3299a8`,
                       background: "#f9fafb",
                       marginTop: "60px",
                     }}
@@ -349,7 +349,7 @@ export default function Landing() {
                       </svg>
                     </div>
                     <div className="font-bold text-xl text-gray-900 mb-1">{fb.name || "Anonymous"}</div>
-                    <div className="text-sm" style={{ color: "#25d7eb" }}>{fb.role}</div>
+                    <div className="text-sm" style={{ color: "#3299a8" }}>{fb.role}</div>
                     <div className="flex justify-center mb-3">
                       {[...Array(fb.rating || 5)].map((_, idx) => (
                         <span key={idx} className="text-yellow-400 text-xl">★</span>

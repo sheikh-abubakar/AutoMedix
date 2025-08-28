@@ -150,10 +150,10 @@ export default function Login({ onSignupClick }: { onSignupClick?: () => void })
             position: relative;
             width: 800px;
             height: 800px;
-            border: 2px solid #25d7eb;
-            box-shadow: 0 0 25px #25d7eb;
+            border: 2px solid #3299a8;
+            box-shadow: 0 0 25px #3299a8;
             overflow: hidden;
-            background: linear-gradient(120deg, #fff 60%, #25d7eb 50%);
+            background: linear-gradient(120deg, #fff 60%, #3299a8 50%);
             display: flex;
           }
           .form-box {
@@ -170,7 +170,7 @@ export default function Login({ onSignupClick }: { onSignupClick?: () => void })
             z-index: 2;
           }
           .form-box h2 {
-            color: #25d7eb !important;
+            color: #3299a8 !important;
           }
           .welcome-box {
             position: absolute;
@@ -183,8 +183,8 @@ export default function Login({ onSignupClick }: { onSignupClick?: () => void })
             justify-content: center;
             align-items: center;
             padding: 40px;
-            background: linear-gradient(120deg, #25d7eb 60%, #fff 100%);
-            color: #25d7eb;
+            background: linear-gradient(120deg, #3299a8 60%, #fff 100%);
+            color: #3299a8;
             z-index: 1;
           }
           .input-box {
@@ -202,14 +202,14 @@ export default function Login({ onSignupClick }: { onSignupClick?: () => void })
             font-size: 16px;
             color: #555; /* grey text for fields */
             font-weight: 600;
-            border-bottom: 2px solid #25d7eb;
+            border-bottom: 2px solid #3299a8;
             padding-right: 23px;
             padding-left: 90px; 
             transition: .5s;
             box-sizing: border-box;
           }
           .input-box input:focus {
-            border-bottom: 2px solid #25d7eb;
+            border-bottom: 2px solid #3299a8;
           }
           .input-box svg {
             position: absolute;
@@ -217,7 +217,7 @@ export default function Login({ onSignupClick }: { onSignupClick?: () => void })
             top: 20%;
             transform: translateY(-50%);
             pointer-events: none;
-            color: #25d7eb;
+            color: #3299a8;
           }
           .animate-slide-in {
             animation: slide-in 0.7s cubic-bezier(.68,-0.55,.27,1.55);

@@ -162,40 +162,41 @@ export default function HealthRecords() {
                 Upload Record
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md rounded-2xl shadow-2xl bg-white">
               <DialogHeader>
-                <DialogTitle>Upload Medical Record</DialogTitle>
+                <DialogTitle className="text-[#25d7eb] text-xl font-bold">Upload Medical Record</DialogTitle>
               </DialogHeader>
               
-              <form onSubmit={handleUpload} className="space-y-4">
+              <form onSubmit={handleUpload} className="space-y-5">
                 <div>
-                  <Label htmlFor="title">Title *</Label>
+                  <Label htmlFor="title" className="font-semibold text-gray-700">Title *</Label>
                   <Input
                     id="title"
+                    className="mt-1 rounded-lg border-gray-300 focus:border-[#25d7eb] focus:ring-[#25d7eb]"
                     placeholder="e.g., Blood Test Results"
                     value={uploadForm.title}
                     onChange={(e) => setUploadForm({...uploadForm, title: e.target.value})}
                     data-testid="input-record-title"
                   />
                 </div>
-                
                 <div>
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description" className="font-semibold text-gray-700">Description</Label>
                   <Textarea
                     id="description"
+                    className="mt-1 rounded-lg border-gray-300 focus:border-[#25d7eb] focus:ring-[#25d7eb]"
                     placeholder="Brief description of the document"
                     value={uploadForm.description}
                     onChange={(e) => setUploadForm({...uploadForm, description: e.target.value})}
                     data-testid="textarea-record-description"
                   />
                 </div>
-                
                 <div>
-                  <Label htmlFor="file">File * (PDF, JPG, PNG, DOCX - Max 10MB)</Label>
+                  <Label htmlFor="file" className="font-semibold text-gray-700">File * (PDF, JPG, PNG, DOCX - Max 10MB)</Label>
                   <Input
                     id="file"
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png,.docx"
+                    className="mt-1 rounded-lg border-gray-300 focus:border-[#25d7eb] focus:ring-[#25d7eb]"
                     onChange={handleFileChange}
                     data-testid="input-record-file"
                   />
@@ -205,11 +206,10 @@ export default function HealthRecords() {
                     </p>
                   )}
                 </div>
-                
                 <div className="flex space-x-3 pt-4">
                   <Button 
                     type="submit" 
-                    className="flex-1"
+                    className="flex-1 bg-[#25d7eb] hover:bg-[#1cb6c4] text-white font-semibold rounded-lg shadow"
                     disabled={uploadRecordMutation.isPending}
                     data-testid="button-upload-submit"
                   >
@@ -218,7 +218,7 @@ export default function HealthRecords() {
                   <Button 
                     type="button" 
                     variant="outline" 
-                    className="flex-1"
+                    className="flex-1 rounded-lg"
                     onClick={() => setIsUploadModalOpen(false)}
                     data-testid="button-upload-cancel"
                   >

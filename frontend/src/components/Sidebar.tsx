@@ -23,11 +23,9 @@ import { Link } from "wouter";
 const doctorNavItems = [
   { icon: BarChart3, label: "Dashboard", href: "/doctor/dashboard", badge: null },
   { icon: Calendar, label: "Appointments", href: "/doctor/appointments", badge: null },
-  { icon: Users, label: "My Patients", href: "/patients", badge: null },
   { icon: FileText, label: "Medical Records", href: "/doctor/medical-records", badge: null },
   { icon: CalendarPlus, label: "MySchedule", href: "/doctor/myschedule", badge: null },
   { icon: Video, label: "Video Consultations", href: "/doctor/video-consultation", badge: null },
-  { icon: BarChart3, label: "Analytics", href: "/analytics", badge: null },
   { icon: MessageCircle, label: "Messages", href: "/doctor/messages", badge: null },
   { icon: CreditCard, label: "My Payments", href: "/doctor/payments", badge: null },
   { icon: Star, label: "Feedback", href: "/patient/feedback", badge: null }
@@ -40,7 +38,6 @@ const patientNavItems = [
   { icon: FileText, label: "Upload Report", href: "/upload-report", badge: null },
   { icon: PillBottle, label: "Prescriptions", href: "/prescriptions", badge: null },
   { icon: Video, label: "Consultations", href: "/patient/video-consultation", badge: null },
-  { icon: Heart, label: "Wellness", href: "/wellness", badge: null },
   { icon: Star, label: "Feedback", href: "/patient/feedback", badge: null }
 ];
 
