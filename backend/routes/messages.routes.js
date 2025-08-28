@@ -39,6 +39,7 @@ router.get("/conversations/:userId", async (req, res) => {
     const conversations = await Promise.all(Object.keys(partners).map(async (partnerId) => {
       const user = await User.findById(partnerId).select("name profileImageUrl role specialization");
       const msgs = partners[partnerId];
+      if (!user) return null; // <-- skip if user deleted
       return {
         partner: {
           id: user._id,
@@ -51,8 +52,7 @@ router.get("/conversations/:userId", async (req, res) => {
         lastMessage: msgs[msgs.length - 1],
       };
     }));
-
-    res.json(conversations);
+    res.json(conversations.filter(Boolean)); 
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
