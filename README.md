@@ -83,7 +83,7 @@ Built with ❤️, dedication, and countless hours of effort by **Me & [Hadia Im
 - VS Code or any IDE
 - **Stripe API Keys**  
 - **Daily.co API Key**  
-- **EmailJS Account**
+- **cloudinary Account**
 
 ### 🔹 Steps to Run Locally  
 
@@ -116,12 +116,12 @@ Built with ❤️, dedication, and countless hours of effort by **Me & [Hadia Im
   <img src="https://avatars.githubusercontent.com/u/141654659?v=4" width="80px" style="border-radius:50%;" alt="Hadia Imran"/>
 </a>  
 <br/>
-<a href="https://github.com/hadiaimran"><b>Hadia Imran</b></a>
+<a href="https://github.com/hadiaimran1090"><b>Hadia Imran</b></a>
 
 
 ## 🎬 Demo
 
-[![App Demo](frontend/public/screenshot-for-readme.png)](https://drive.google.com/file/d/1AGJ5lKjyRjul3ZVBiawoXxGV8oB6eW0I/view?usp=sharing)
+[![App Demo](frontend/public/screenshot-for-readme.png)](https://drive.google.com/file/d/1T155QO2CZgp0AXMmRbaVdVTrDbxUEeDB/view?usp=sharing)
 ---
 
 ## 🌟 Support & Contribution  
