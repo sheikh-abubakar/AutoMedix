@@ -28,7 +28,7 @@ interface User {
   name: string;
   email: string;
   role: string;
-  // ...other fields as needed
+  
 }
 
 // Appointment type
@@ -123,9 +123,17 @@ export default function DoctorDashboard() {
     },
   ];
 
-  // Get today's date for calendar highlight
+  // 
   const today = new Date();
   const todayDay = today.getDate();
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+
+  // 
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  // 
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
 
   if (isLoading || !user) {
     return (
@@ -252,9 +260,9 @@ export default function DoctorDashboard() {
                   ))}
                 </div>
                 <div className="grid grid-cols-7 gap-1 text-center text-sm">
-                  {Array.from({ length: 35 }, (_, i) => {
-                    const day = i - 6;
-                    const isCurrentMonth = day > 0 && day <= 31;
+                  {Array.from({ length: firstDayOfMonth + daysInMonth }, (_, i) => {
+                    const day = i - firstDayOfMonth + 1;
+                    const isCurrentMonth = day > 0 && day <= daysInMonth;
                     const isToday = day === todayDay;
                     return (
                       <div
