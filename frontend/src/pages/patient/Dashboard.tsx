@@ -43,90 +43,86 @@ export default function PatientDashboard() {
   return (
     <Layout>
       <div className="p-6">
-        {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Patient Dashboard</h1>
           <p className="text-gray-600 mt-1">Welcome back, {user.name || "Patient"}</p>
         </div>
 
-        {/* Quick Actions */}
+        {/* Top Quick Actions with working links */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <Link href="/book-appointment">
-            <Button className="h-24 flex flex-col items-center justify-center space-y-2 w-full" data-testid="button-book-appointment">
-              <Plus className="h-6 w-6" />
+            <button className="w-full h-24 rounded-lg border bg-white flex flex-col items-center justify-center space-y-2 font-semibold text-base shadow transition hover:shadow-md">
+              <Plus className="h-6 w-6 text-[#3299a8]" />
               <span>Book Appointment</span>
-            </Button>
+            </button>
           </Link>
-
           <Link href="/find-doctors">
-            <Button
-              variant="outline"
-              className="h-24 flex flex-col items-center justify-center space-y-2 w-full"
-              data-testid="button-find-doctors"
-            >
-              <Search className="h-6 w-6" />
+            <button className="w-full h-24 rounded-lg border bg-white flex flex-col items-center justify-center space-y-2 font-semibold text-base shadow transition hover:shadow-md">
+              <Search className="h-6 w-6 text-[#25d7eb]" />
               <span>Find Doctors</span>
-            </Button>
+            </button>
           </Link>
-
           <Link href="/health-records">
-            <Button
-              variant="outline"
-              className="h-24 flex flex-col items-center justify-center space-y-2 w-full"
-              data-testid="button-health-records"
-            >
-              <FileText className="h-6 w-6" />
+            <button className="w-full h-24 rounded-lg border bg-white flex flex-col items-center justify-center space-y-2 font-semibold text-base shadow transition hover:shadow-md">
+              <FileText className="h-6 w-6 text-[#1cb6c4]" />
               <span>Health Records</span>
-            </Button>
+            </button>
           </Link>
-
           <Link href="/messages">
-            <Button
-              variant="outline"
-              className="h-24 flex flex-col items-center justify-center space-y-2 w-full"
-              data-testid="button-messages"
-            >
-              <MessageCircle className="h-6 w-6" />
+            <button className="w-full h-24 rounded-lg border bg-white flex flex-col items-center justify-center space-y-2 font-semibold text-base shadow transition hover:shadow-md">
+              <MessageCircle className="h-6 w-6 text-green-500" />
               <span>Messages</span>
-            </Button>
+            </button>
           </Link>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Upcoming Appointments */}
+          {/* My Appointments */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <Calendar className="h-5 w-5" />
-                <span>Upcoming Appointments</span>
+                <Calendar className="h-5 w-5 text-[#3299a8]" />
+                <span>My Appointments</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">
-                <Clock className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No upcoming appointments</h3>
-                <p className="text-gray-600 mb-4">Schedule your next appointment to get started.</p>
-                <Button data-testid="button-schedule-appointment">Schedule Now</Button>
+                <Clock className="h-12 w-12 text-[#3299a8] mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Appointments</h3>
+                <p className="text-gray-600 mb-4">Here you can view your upcoming appointments.</p>
+                <Link href="/appointments">
+                  <Button
+                    className="bg-[#3299a8] hover:bg-[#217a8a] text-white font-semibold px-6 py-2 rounded-lg shadow"
+                    data-testid="button-schedule-appointment"
+                  >
+                    View
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
 
-          {/* Recent Medical Records */}
+          {/* Medical Records */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <FileText className="h-5 w-5" />
-                <span>Recent Medical Records</span>
+                <FileText className="h-5 w-5 text-[#3299a8]" />
+                <span>Medical Records</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">
-                <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No medical records</h3>
-                <p className="text-gray-600 mb-4">Your medical records will appear here after consultations.</p>
-                <Button variant="outline" data-testid="button-upload-records">
-                  Upload Records
-                </Button>
+                <FileText className="h-12 w-12 text-[#3299a8] mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Medical Records</h3>
+                <p className="text-gray-600 mb-4">You can upload your medical records here.</p>
+                <Link href="/upload-report">
+                  <Button
+                    className="bg-[#3299a8] hover:bg-[#217a8a] text-white font-semibold px-6 py-2 rounded-lg shadow"
+                    data-testid="button-upload-records"
+                  >
+                    Upload Records
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>

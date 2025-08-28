@@ -73,6 +73,7 @@ export default function DoctorDashboard() {
   const todayDate = new Date().toISOString().split("T")[0];
   const todaysAppointments = appointments.filter(app => app.date === todayDate);
 
+  // Remove Pending Approvals stat
   const statsData = [
     {
       title: "Today's Appointments",
@@ -81,13 +82,6 @@ export default function DoctorDashboard() {
       changeText: "",
       icon: Calendar,
       color: "blue",
-    },
-    {
-      title: "Pending Approvals",
-      value: appointments.filter((apt) => apt.status === 'pending').length,
-      changeText: "Requires attention",
-      icon: Clock,
-      color: "yellow",
     },
     {
       title: "Total Appointments",
@@ -107,6 +101,7 @@ export default function DoctorDashboard() {
     },
   ] as const;
 
+  // Update Quick Actions links
   const quickActions = [
     {
       title: "Create Prescription",
@@ -118,15 +113,19 @@ export default function DoctorDashboard() {
       title: "View Medical Records",
       icon: FileText,
       color: "purple",
-      onClick: () => console.log("View records"),
+      onClick: () => window.location.href = "/doctor/medical-records",
     },
     {
       title: "Start Video Call",
       icon: Video,
       color: "orange",
-      onClick: () => console.log("Start video call"),
+      onClick: () => window.location.href = "/doctor/video-consultation",
     },
   ];
+
+  // Get today's date for calendar highlight
+  const today = new Date();
+  const todayDay = today.getDate();
 
   if (isLoading || !user) {
     return (
@@ -157,13 +156,13 @@ export default function DoctorDashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           {statsData.map((stat) => (
             <StatsCard key={stat.title} {...stat} />
           ))}
         </div>
 
-        {/* Today's Schedule: Only show today's appointments */}
+        {/* Today's Schedule */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <Card>
@@ -184,9 +183,20 @@ export default function DoctorDashboard() {
                     {todaysAppointments.map((appointment) => (
                       <div
                         key={appointment._id || appointment.id}
-                        className="bg-gray-50 rounded-lg px-4 py-3 text-lg font-semibold text-gray-800"
+                        className="flex items-center gap-4 bg-white rounded-xl shadow px-5 py-4 border border-[#3299a8] hover:shadow-lg transition"
                       >
-                        {appointment.patient?.name || "Unknown Patient"}
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-6 w-6 text-[#3299a8]" />
+                          <span className="font-semibold text-lg text-[#3299a8]">
+                            {appointment.time}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Users className="h-6 w-6 text-[#3299a8]" />
+                          <span className="font-medium text-gray-800">
+                            {appointment.patient?.name || "Unknown Patient"}
+                          </span>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -230,7 +240,7 @@ export default function DoctorDashboard() {
               </CardContent>
             </Card>
 
-            {/* Mini Calendar */}
+            {/* Mini Calendar with today's date highlighted */}
             <Card>
               <CardHeader>
                 <CardTitle>Calendar</CardTitle>
@@ -245,19 +255,16 @@ export default function DoctorDashboard() {
                   {Array.from({ length: 35 }, (_, i) => {
                     const day = i - 6;
                     const isCurrentMonth = day > 0 && day <= 31;
-                    const isToday = day === 15;
+                    const isToday = day === todayDay;
                     return (
                       <div
                         key={i}
                         className={`p-2 hover:bg-gray-100 rounded cursor-pointer relative
                           ${!isCurrentMonth ? 'text-gray-400' : ''}
-                          ${isToday ? 'bg-primary text-white hover:bg-primary-600' : ''}`}
+                          ${isToday ? 'bg-[#3299a8] text-white font-bold border-2 border-[#217a8a]' : ''}`}
                         data-testid={`calendar-day-${day}`}
                       >
                         {isCurrentMonth ? day : ''}
-                        {day === 16 && (
-                          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></div>
-                        )}
                       </div>
                     );
                   })}
@@ -265,57 +272,6 @@ export default function DoctorDashboard() {
               </CardContent>
             </Card>
           </div>
-        </div>
-
-        {/* Recent Patients Table */}
-        <div className="mt-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
-              <CardTitle>Recent Patients</CardTitle>
-              <Button variant="ghost" data-testid="button-view-all-patients">View All</Button>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Visit</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Condition</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 rounded-full bg-gray-200 mr-4"></div>
-                          <div>
-                            <div className="text-sm font-medium text-gray-900" data-testid="text-patient-name">David Wilson</div>
-                            <div className="text-sm text-gray-500">david.wilson@email.com</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-testid="text-last-visit">Jan 12, 2024</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-testid="text-condition">Hypertension</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800" data-testid="status-stable">Stable</span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <Button variant="ghost" size="sm" className="text-primary-600 hover:text-primary-900 mr-3" data-testid="button-view-patient">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" className="text-green-600 hover:text-green-900" data-testid="button-message-patient">
-                          <MessageCircle className="h-4 w-4" />
-                        </Button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </Layout>
