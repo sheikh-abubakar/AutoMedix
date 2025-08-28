@@ -3,7 +3,7 @@ import { submitFeedback, getAllFeedbacks } from "../controllers/feedback.control
 
 const router = express.Router();
 
-router.post("/", submitFeedback); // POST /api/feedback/
-router.get("/feedbacks", getAllFeedbacks); // GET /api/feedback/feedbacks
+router.post("/", submitFeedback);
+router.get("/feedbacks", getAllFeedbacks);
 
 export default router;

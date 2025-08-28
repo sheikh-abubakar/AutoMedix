@@ -8,7 +8,7 @@ const router = express.Router();
 // Get doctor profile by user ID (create if not exists)
 router.get("/:userId", async (req, res) => {
   try {
-    const userId = new mongoose.Types.ObjectId(req.params.userId); // <-- FIXED
+    const userId = new mongoose.Types.ObjectId(req.params.userId); 
     let profile = await DoctorProfile.findOne({ user_id: userId });
     if (!profile) {
       const user = await User.findById(userId);

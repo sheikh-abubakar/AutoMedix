@@ -6,8 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
-// Use fetch directly if apiRequest is typed wrongly
-// import { apiRequest } from "@/lib/queryClient";
 
 import DoctorDashboard from "./doctor/Dashboard";
 import PatientDashboard from "./patient/Dashboard";
