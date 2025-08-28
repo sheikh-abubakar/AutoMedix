@@ -24,7 +24,7 @@ router.post("/book", async (req, res) => {
 
     // Condition 1: Max 4 appointments per doctor per day
     const dailyCount = await Appointment.countDocuments({ doctor: doctorId, date });
-    if (dailyCount >= 4) {
+    if (dailyCount >= 7) {
       return res.status(400).json({ message: "Slots filled for this day. Please choose another day." });
     }
 
