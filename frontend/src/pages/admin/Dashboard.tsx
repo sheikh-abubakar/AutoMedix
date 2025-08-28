@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import Layout from "@/components/Layout";
-import StatsCard from "@/components/StatsCard";
 import PendingDoctors from "./PendingDoctors";
-import { Users, UserCheck, Calendar, DollarSign, Shield, Settings } from "lucide-react";
+import { Users, UserCheck, Calendar, Shield, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import axios from "@/api/axiosClient"; // Add this import
 
 export default function AdminDashboard() {
   const { toast } = useToast();
@@ -14,7 +15,10 @@ export default function AdminDashboard() {
   const [pendingCount, setPendingCount] = useState(0);
   const [showPendingList, setShowPendingList] = useState(false);
 
-  // Redirect to home if not authenticated
+  // Real counts from analytics API
+  const [stats, setStats] = useState<any>(null);
+  const [notifications, setNotifications] = useState<any[]>([]); // Add notifications state
+
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       toast({
@@ -36,7 +40,48 @@ export default function AdminDashboard() {
       .then(data => setPendingCount(data.length));
   }, []);
 
-  if (isLoading || !user) {
+  // Fetch analytics stats for real counts
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("http://localhost:5000/api/admin/analytics", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await res.json();
+        console.log("Dashboard analytics response:", data);
+        setStats(data);
+      } catch (err) {
+        setStats({
+          totalUsers: 0,
+          totalAppointments: 0,
+        });
+      }
+    }
+    fetchStats();
+  }, []);
+
+  // Fetch notifications for recent activity
+  useEffect(() => {
+    async function fetchNotifications() {
+      try {
+        const adminId = localStorage.getItem("userId") || localStorage.getItem("_id");
+        const token = localStorage.getItem("token");
+        const res = await axios.get(`/notifications/admin/${adminId}?isRead=false`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setNotifications(res.data);
+      } catch (err) {
+        setNotifications([]);
+      }
+    }
+    fetchNotifications();
+  }, []);
+
+  if (isLoading || !user || !stats) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -47,40 +92,9 @@ export default function AdminDashboard() {
     );
   }
 
-  const statsData = [
-    {
-      title: "Total Users",
-      value: "1,247",
-      change: "+12%",
-      changeText: "from last month",
-      icon: Users,
-      color: "blue",
-    },
-    {
-      title: "Pending Doctor Approvals",
-      value: pendingCount.toString(),
-      changeText: "Requires attention",
-      icon: UserCheck,
-      color: "yellow",
-      clickable: true, // custom property
-    },
-    {
-      title: "Total Appointments",
-      value: "15,394",
-      change: "+8.2%",
-      changeText: "from last month",
-      icon: Calendar,
-      color: "green",
-    },
-    {
-      title: "Platform Revenue",
-      value: "$847k",
-      change: "+15.1%",
-      changeText: "from last month",
-      icon: DollarSign,
-      color: "purple",
-    },
-  ] as const;
+  // 
+  const totalUsers = (stats.totalUsers ?? 0) - 1; 
+  const totalAppointments = stats.totalAppointments ?? 0;
 
   return (
     <Layout>
@@ -91,17 +105,26 @@ export default function AdminDashboard() {
           <p className="text-gray-600 mt-1">Platform management and analytics</p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          {statsData.map((stat, index) => (
-            <div
-              key={index}
-              onClick={index === 1 ? () => setShowPendingList(true) : undefined}
-              style={{ cursor: index === 1 ? "pointer" : "default" }}
-            >
-              <StatsCard {...stat} />
-            </div>
-          ))}
+        {/* Stats Cards - Use Card for consistent sizing */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <Card className="flex flex-col items-center justify-center py-8 min-h-[180px]">
+            <Users className="h-10 w-10 text-blue-500 mb-2" />
+            <span className="text-4xl font-bold text-indigo-700">{totalUsers.toLocaleString()}</span>
+            <span className="mt-2 text-lg text-gray-700">Total Users</span>
+          </Card>
+          <Card
+            className="flex flex-col items-center justify-center py-8 min-h-[180px] cursor-pointer"
+            onClick={() => setShowPendingList(true)}
+          >
+            <UserCheck className="h-10 w-10 text-yellow-500 mb-2" />
+            <span className="text-4xl font-bold text-yellow-700">{pendingCount.toLocaleString()}</span>
+            <span className="mt-2 text-lg text-gray-700">Pending Doctor Approvals</span>
+          </Card>
+          <Card className="flex flex-col items-center justify-center py-8 min-h-[180px]">
+            <Calendar className="h-10 w-10 text-green-500 mb-2" />
+            <span className="text-4xl font-bold text-green-700">{totalAppointments.toLocaleString()}</span>
+            <span className="mt-2 text-lg text-gray-700">Total Appointments</span>
+          </Card>
         </div>
 
         {/* Pending Doctors List Section */}
@@ -115,7 +138,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <Button 
             variant="outline" 
-            className="h-32 flex flex-col items-center justify-center space-y-3"
+            className="h-32 min-h-[180px] flex flex-col items-center justify-center space-y-3"
             data-testid="button-manage-users"
           >
             <Users className="h-8 w-8 text-blue-500" />
@@ -124,22 +147,22 @@ export default function AdminDashboard() {
               <div className="text-sm text-gray-500">View and manage all users</div>
             </div>
           </Button>
-
+          <Link to="/admin/doctor-approvals" className="w-full">
+            <Button 
+              variant="outline" 
+              className="h-32 min-h-[180px] w-full flex flex-col items-center justify-center space-y-3"
+              data-testid="button-approve-doctors"
+            >
+              <UserCheck className="h-8 w-8 text-green-500" />
+              <div className="text-center">
+                <div className="font-semibold">Approved Doctors</div>
+                <div className="text-sm text-gray-500">Review doctor applications</div>
+              </div>
+            </Button>
+          </Link>
           <Button 
             variant="outline" 
-            className="h-32 flex flex-col items-center justify-center space-y-3"
-            data-testid="button-approve-doctors"
-          >
-            <UserCheck className="h-8 w-8 text-green-500" />
-            <div className="text-center">
-              <div className="font-semibold">Approve Doctors</div>
-              <div className="text-sm text-gray-500">Review doctor applications</div>
-            </div>
-          </Button>
-
-          <Button 
-            variant="outline" 
-            className="h-32 flex flex-col items-center justify-center space-y-3"
+            className="h-32 min-h-[180px] flex flex-col items-center justify-center space-y-3"
             data-testid="button-platform-settings"
           >
             <Settings className="h-8 w-8 text-purple-500" />
@@ -158,38 +181,23 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <div className="bg-green-100 p-2 rounded-full">
-                    <UserCheck className="h-4 w-4 text-green-600" />
+                {notifications.slice(0, 5).map((n) => (
+                  <div key={n._id} className="flex items-center space-x-4">
+                    <div className="bg-indigo-100 p-2 rounded-full">
+                      <UserCheck className="h-4 w-4 text-indigo-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{n.message}</p>
+                      <p className="text-xs text-gray-500">{n.type}</p>
+                    </div>
+                    <span className="text-xs text-gray-500">
+                      {new Date(n.createdAt).toLocaleString()}
+                    </span>
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">New doctor registered</p>
-                    <p className="text-xs text-gray-500">Dr. Sarah Johnson - Cardiology</p>
-                  </div>
-                  <span className="text-xs text-gray-500">2 hours ago</span>
-                </div>
-
-                <div className="flex items-center space-x-4">
-                  <div className="bg-blue-100 p-2 rounded-full">
-                    <Users className="h-4 w-4 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">New patient registered</p>
-                    <p className="text-xs text-gray-500">John Doe joined the platform</p>
-                  </div>
-                  <span className="text-xs text-gray-500">4 hours ago</span>
-                </div>
-
-                <div className="flex items-center space-x-4">
-                  <div className="bg-purple-100 p-2 rounded-full">
-                    <DollarSign className="h-4 w-4 text-purple-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Payment processed</p>
-                    <p className="text-xs text-gray-500">$150 consultation fee</p>
-                  </div>
-                  <span className="text-xs text-gray-500">6 hours ago</span>
-                </div>
+                ))}
+                {notifications.length === 0 && (
+                  <div className="text-center text-gray-500 py-4">No recent notifications.</div>
+                )}
               </div>
             </CardContent>
           </Card>
