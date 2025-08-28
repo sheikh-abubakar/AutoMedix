@@ -94,7 +94,7 @@ export default function Analytics() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
 
             <Card className="p-6 flex flex-col items-center">
-              <span className="text-5xl font-bold text-indigo-600">{data.totalUsers}</span>
+              <span className="text-5xl font-bold text-indigo-600">{(data.totalUsers ?? 0) - 1}</span>
               <span className="mt-2 text-lg text-gray-700">Total Users</span>
             </Card>
             <Card className="p-6 flex flex-col items-center">
