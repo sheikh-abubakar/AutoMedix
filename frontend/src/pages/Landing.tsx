@@ -79,8 +79,20 @@ export default function Landing() {
               <span className="text-xl font-bold text-gray-900">AutoMedix</span>
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleLogin} data-testid="button-login">
+              <Button
+                onClick={handleLogin}
+                data-testid="button-login"
+                className="border-2 border-[#3299a8] text-[#3299a8] bg-white hover:bg-[#3299a8] hover:text-white font-semibold rounded-lg shadow-sm transition-all"
+              >
                 Sign In
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setLocation("/contact-us")}
+                data-testid="button-contact-us"
+                className="border-2 border-green-500 text-green-700 bg-white hover:bg-green-50 font-semibold rounded-lg shadow-sm transition-all"
+              >
+                Contact Us
               </Button>
             </div>
           </div>

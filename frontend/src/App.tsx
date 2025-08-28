@@ -34,8 +34,9 @@ import DoctorVideoConsultation from "@/pages/doctor/VideoConsultation";
 import PatientVideoConsultation from "@/pages/patient/VideoConsultation";
 import DoctorNotifications from "@/pages/doctor/Notifications";
 import AdminNotifications from "@/pages/admin/Notifications";
-
+import ContactUs from "@/pages/ContactUs"; // Add this import
 import AuthPage from "@/pages/auth/AuthPage";
+import AdminMessages from "@/pages/admin/AdminMessages"; // Add this import
 
 function Router() {
   const { isLoading } = useAuth();
@@ -82,6 +83,8 @@ function Router() {
       <Route path="/patient/video-consultation" component={PatientVideoConsultation} />
       <Route path="/doctor/notifications" component={DoctorNotifications} />
       <Route path="/admin/notifications" component={AdminNotifications} />
+      <Route path="/contact-us" component={ContactUs} />
+      <Route path="/admin/admin-messages" component={AdminMessages} />
       <Route component={NotFound} />
     </Switch>
   );

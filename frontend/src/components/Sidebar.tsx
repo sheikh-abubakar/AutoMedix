@@ -1,5 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import {Mail} from "lucide-react"
 import {
   BarChart3,
   Calendar,
@@ -44,8 +45,8 @@ const patientNavItems = [
 const adminNavItems = [
   { icon: BarChart3, label: "Dashboard", href: "/admin/dashboard", badge: null },
   { icon: UserCheck, label: "Approved doctors", href: "/admin/doctor-approvals", badge: null },
-  { icon: Calendar, label: "Appointments", href: "/admin/appointments", badge: null },
   { icon: BarChart3, label: "Analytics", href: "/admin/analytics", badge: null },
+  { icon: Mail, label: "Customer Queries", href: "/admin/admin-messages", badge: null }
 ];
 
 export default function Sidebar() {
