@@ -53,19 +53,17 @@ export default function Landing() {
     setLocation("/signup");
   };
 
-  const handlePrevButton = () => {
-    setCurrent(current > 0 ? current - 1 : 0);
-  };
-
-  const handleNextButton = () => {
-    setCurrent(current < testimonials.length - visibleCards ? current + 1 : current);
-  };
-
   useEffect(() => {
     axios.get("http://localhost:5000/api/feedback/feedbacks").then(res => {
       if (Array.isArray(res.data)) setTestimonials(res.data);
       else setTestimonials([]);
     });
+  }, []);
+
+  // Animation for hero section
+  const [heroVisible, setHeroVisible] = useState(false);
+  useEffect(() => {
+    setTimeout(() => setHeroVisible(true), 200);
   }, []);
 
   return (
@@ -75,7 +73,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <Heart className="h-8 w-8 text-primary" />
+              <Heart className="h-8 w-8 text-primary animate-bounce" />
               <span className="text-xl font-bold text-gray-900">AutoMedix</span>
             </div>
             <div className="flex gap-2">
@@ -90,7 +88,7 @@ export default function Landing() {
                 variant="outline"
                 onClick={() => setLocation("/contact-us")}
                 data-testid="button-contact-us"
-                className="border-2 border-green-500 text-green-700 bg-white hover:bg-green-50 font-semibold rounded-lg shadow-sm transition-all"
+                className="border-2 border-green-500 text-green-700 bg-white hover:bg-green-100 font-semibold rounded-lg shadow-sm transition-all"
               >
                 Contact Us
               </Button>
@@ -104,11 +102,19 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
+              <h1
+                className={`text-4xl lg:text-6xl font-bold text-gray-900 mb-6 transition-all duration-700 ${
+                  heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
+              >
                 Healthcare at Your
-                <span className="text-primary"> Fingertips</span>
+                <span className="text-primary animate-pulse"> Fingertips</span>
               </h1>
-              <p className="text-xl text-gray-600 mb-8">
+              <p
+                className={`text-xl text-gray-600 mb-8 transition-all duration-700 delay-200 ${
+                  heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
+              >
                 Connect with qualified doctors instantly. Book appointments, get consultations, 
                 and manage your health records - all from the comfort of your home.
               </p>
@@ -116,18 +122,17 @@ export default function Landing() {
                 <Button 
                   size="lg" 
                   onClick={handleLogin}
-                  className="text-lg px-8 py-3"
+                  className="text-lg px-8 py-3 animate-fade-in"
                   data-testid="button-get-started"
                 >
                   Get Started
                 </Button>
-            
               </div>
             </div>
             <div className="relative">
-              <div className="bg-white rounded-2xl shadow-2xl p-8">
+              <div className="bg-white rounded-2xl shadow-2xl p-8 animate-slide-in-right">
                 <div className="flex items-center space-x-4 mb-6">
-                  <div className="bg-green-100 p-3 rounded-full">
+                  <div className="bg-green-100 p-3 rounded-full animate-bounce">
                     <Video className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
@@ -137,15 +142,15 @@ export default function Landing() {
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
-                    <CheckCircle className="h-5 w-5 text-green-500" />
+                    <CheckCircle className="h-5 w-5 text-green-500 animate-fade-in" />
                     <span className="text-gray-700">Instant appointments</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <CheckCircle className="h-5 w-5 text-green-500" />
+                    <CheckCircle className="h-5 w-5 text-green-500 animate-fade-in" />
                     <span className="text-gray-700">Secure video calls</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <CheckCircle className="h-5 w-5 text-green-500" />
+                    <CheckCircle className="h-5 w-5 text-green-500 animate-fade-in" />
                     <span className="text-gray-700">Digital prescriptions</span>
                   </div>
                 </div>
@@ -153,22 +158,41 @@ export default function Landing() {
             </div>
           </div>
         </div>
+        {/* Animations CSS */}
+        <style>
+          {`
+            .animate-fade-in {
+              animation: fadeIn 1s ease-in;
+            }
+            .animate-slide-in-right {
+              animation: slideInRight 1s ease;
+            }
+            @keyframes fadeIn {
+              from { opacity: 0; }
+              to { opacity: 1; }
+            }
+            @keyframes slideInRight {
+              from { opacity: 0; transform: translateX(60px);}
+              to { opacity: 1; transform: translateX(0);}
+            }
+          `}
+        </style>
       </section>
 
       {/* Services Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 animate-fade-in">
               Our Services
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto animate-fade-in">
               Comprehensive healthcare solutions designed to make medical care accessible and convenient
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="text-center p-6 hover:shadow-lg transition-shadow">
+            <Card className="text-center p-6 hover:shadow-2xl transition-shadow duration-500 animate-fade-in">
               <CardContent className="pt-6">
                 <div className="bg-blue-50 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                   <Video className="h-8 w-8 text-blue-500" />
@@ -178,7 +202,7 @@ export default function Landing() {
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6 hover:shadow-lg transition-shadow">
+            <Card className="text-center p-6 hover:shadow-2xl transition-shadow duration-500 animate-fade-in">
               <CardContent className="pt-6">
                 <div className="bg-green-50 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                   <Calendar className="h-8 w-8 text-green-500" />
@@ -188,7 +212,7 @@ export default function Landing() {
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6 hover:shadow-lg transition-shadow">
+            <Card className="text-center p-6 hover:shadow-2xl transition-shadow duration-500 animate-fade-in">
               <CardContent className="pt-6">
                 <div className="bg-purple-50 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                   <FileText className="h-8 w-8 text-purple-500" />
@@ -198,7 +222,7 @@ export default function Landing() {
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6 hover:shadow-lg transition-shadow">
+            <Card className="text-center p-6 hover:shadow-2xl transition-shadow duration-500 animate-fade-in">
               <CardContent className="pt-6">
                 <div className="bg-orange-50 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                   <Shield className="h-8 w-8 text-orange-500" />
@@ -215,16 +239,16 @@ export default function Landing() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 animate-fade-in">
               How It Works
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-gray-600 animate-fade-in">
               Get started with healthcare in just a few simple steps
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
+            <div className="text-center animate-slide-in-right">
               <div className="bg-primary text-white rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center text-2xl font-bold">
                 1
               </div>
@@ -234,7 +258,7 @@ export default function Landing() {
               </p>
             </div>
 
-            <div className="text-center">
+            <div className="text-center animate-slide-in-right" style={{ animationDelay: "0.2s" }}>
               <div className="bg-primary text-white rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center text-2xl font-bold">
                 2
               </div>
@@ -244,7 +268,7 @@ export default function Landing() {
               </p>
             </div>
 
-            <div className="text-center">
+            <div className="text-center animate-slide-in-right" style={{ animationDelay: "0.4s" }}>
               <div className="bg-primary text-white rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center text-2xl font-bold">
                 3
               </div>
@@ -261,19 +285,19 @@ export default function Landing() {
       <section className="py-20 bg-gray-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
-            <div>
+            <div className="animate-fade-in">
               <div className="text-4xl font-bold mb-2">500+</div>
               <div className="text-primary-100">Qualified Doctors</div>
             </div>
-            <div>
+            <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
               <div className="text-4xl font-bold mb-2">10K+</div>
               <div className="text-primary-100">Happy Patients</div>
             </div>
-            <div>
+            <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
               <div className="text-4xl font-bold mb-2">50K+</div>
               <div className="text-primary-100">Consultations</div>
             </div>
-            <div>
+            <div className="animate-fade-in" style={{ animationDelay: "0.6s" }}>
               <div className="text-4xl font-bold mb-2">4.9★</div>
               <div className="text-primary-100">Patient Rating</div>
             </div>
@@ -285,10 +309,10 @@ export default function Landing() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 animate-fade-in">
               What Our Users Say
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-gray-600 animate-fade-in">
               Real feedback from our patients and doctors
             </p>
           </div>
@@ -304,6 +328,13 @@ export default function Landing() {
                 }
                 .testimonial-track.paused {
                   animation-play-state: paused;
+                }
+                .testimonial-card-animate {
+                  animation: fadeInUp 1s;
+                }
+                @keyframes fadeInUp {
+                  from { opacity: 0; transform: translateY(40px);}
+                  to { opacity: 1; transform: translateY(0);}
                 }
               `}
             </style>
@@ -325,7 +356,7 @@ export default function Landing() {
                 {[...testimonials, ...testimonials].map((fb, i) => (
                   <div
                     key={i}
-                    className="relative bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center min-w-[350px] max-w-[350px] mx-auto border border-gray-100"
+                    className="relative bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center min-w-[350px] max-w-[350px] mx-auto border border-gray-100 testimonial-card-animate"
                     style={{
                       borderBottom: `16px solid #3299a8`,
                       background: "#f9fafb",
@@ -379,17 +410,17 @@ export default function Landing() {
       {/* CTA Section */}
       <section className="py-20 bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
+          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6 animate-fade-in">
             Ready to Take Control of Your Health?
           </h2>
-          <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto animate-fade-in">
             Join thousands of patients who trust AutoMedix for their healthcare needs. 
             Start your journey to better health today.
           </p>
           <Button 
             size="lg" 
             onClick={handleSignup}
-            className="text-lg px-8 py-3 bg-primary hover:bg-primary-600"
+            className="text-lg px-8 py-3 bg-primary hover:bg-primary-600 animate-fade-in"
             data-testid="button-join-now"
           >
             Join AutoMedix Now
@@ -403,7 +434,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <Heart className="h-6 w-6 text-primary" />
+                <Heart className="h-6 w-6 text-primary animate-bounce" />
                 <span className="text-lg font-bold">AutoMedix</span>
               </div>
               <p className="text-gray-600">
