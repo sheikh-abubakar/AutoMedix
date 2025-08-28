@@ -77,11 +77,6 @@ export default function AdminNotifications() {
                 >
                   <div className="flex justify-between items-center">
                     <span className="font-medium">{n.message}</span>
-                    {n.link && (
-                      <a href={n.link} className="text-indigo-600 underline ml-2" target="_blank" rel="noopener noreferrer">
-                        View
-                      </a>
-                    )}
                   </div>
                   <div className="text-xs text-gray-500 mt-1">
                     {new Date(n.createdAt).toLocaleString()}
